@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Taller de Español</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1b1815;
+  --paper:#eee6d8;
+  --paper2:#e4dac8;
+  --copper:#a8562a;
+  --copper-dark:#7c3f1f;
+  --verdigris:#5c7a6e;
+  --verdigris-dark:#3f5850;
+  --steel:#4a5568;
+  --stone:#8c8478;
+  --line:#c9bda6;
+  --card:#f5efe2;
+  --good:#4a7a4a;
+  --bad:#a83e2f;
+  --good-bg:#e3ecdf;
+  --bad-bg:#f3dfda;
+  --shadow:0 1px 0 rgba(27,24,21,0.06);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --ink:#ece5d6;
+    --paper:#171411;
+    --paper2:#1f1b16;
+    --copper:#d97f45;
+    --copper-dark:#e4986a;
+    --verdigris:#7fa596;
+    --verdigris-dark:#9bc0b0;
+    --steel:#9aa6b8;
+    --stone:#8c8478;
+    --line:#3a332a;
+    --card:#1e1a15;
+    --good:#7fbf7f;
+    --bad:#e2695a;
+    --good-bg:#243024;
+    --bad-bg:#331f1c;
+    --shadow:0 1px 0 rgba(0,0,0,0.4);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#ece5d6;
+  --paper:#171411;
+  --paper2:#1f1b16;
+  --copper:#d97f45;
+  --copper-dark:#e4986a;
+  --verdigris:#7fa596;
+  --verdigris-dark:#9bc0b0;
+  --steel:#9aa6b8;
+  --stone:#8c8478;
+  --line:#3a332a;
+  --card:#1e1a15;
+  --good:#7fbf7f;
+  --bad:#e2695a;
+  --good-bg:#243024;
+  --bad-bg:#331f1c;
+  --shadow:0 1px 0 rgba(0,0,0,0.4);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:'Work Sans',system-ui,sans-serif;
+  font-size:16px; line-height:1.45;
+  min-height:100%;
+  display:flex; flex-direction:column;
+}
+h1,h2,h3,.display{
+  font-family:'Big Shoulders Display',system-ui,sans-serif;
+  font-weight:700; letter-spacing:0.01em; line-height:0.95;
+  margin:0;
+}
+.mono{font-family:'JetBrains Mono',monospace;}
+button{font-family:inherit; cursor:pointer;}
+a{color:inherit;}
+
+/* ---- layout shell ---- */
+#app{flex:1; display:flex; flex-direction:column; min-height:100vh; height:100%; padding-bottom: calc(64px + env(safe-area-inset-bottom,0px));}
+.topbar{
+  position:sticky; top:env(safe-area-inset-top,0px); z-index:10;
+  padding:14px 18px calc(10px);
+  padding-top: calc(14px + env(safe-area-inset-top,0px));
+  background:var(--paper);
+  border-bottom:1px solid var(--line);
+  display:flex; align-items:baseline; justify-content:space-between;
+}
+.topbar .brand{font-size:22px; color:var(--copper-dark);}
+.topbar .streak{font-size:13px; color:var(--stone); font-family:'JetBrains Mono',monospace;}
+main{flex:1; padding:16px 18px 28px; max-width:640px; width:100%; margin:0 auto;}
+
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:20;
+  height:calc(64px + env(safe-area-inset-bottom,0px));
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  background:var(--card); border-top:1px solid var(--line);
+  display:flex;
+}
+.tabbar button{
+  flex:1; background:none; border:none; color:var(--stone);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; font-size:11px; font-weight:600; padding:6px 2px;
+}
+.tabbar button .ic{font-size:19px; line-height:1;}
+.tabbar button.active{color:var(--copper);}
+
+/* ---- primitives ---- */
+.tag{
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:var(--stone); border:1px solid var(--line); border-radius:2px;
+  padding:2px 7px;
+}
+.panel{
+  background:var(--card); border:1px solid var(--line); border-radius:3px;
+  padding:16px; position:relative; margin-bottom:14px;
+}
+.panel::before{
+  content:""; position:absolute; top:9px; left:9px; width:5px; height:5px;
+  border-radius:50%; border:1px solid var(--line); background:var(--paper);
+}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  border:1px solid var(--ink); background:var(--ink); color:var(--paper);
+  padding:12px 18px; border-radius:2px; font-weight:600; font-size:15px;
+  width:100%;
+}
+.btn:active{opacity:0.85;}
+.btn.secondary{background:transparent; color:var(--ink); border:1px solid var(--line);}
+.btn.copper{background:var(--copper); border-color:var(--copper); color:#fff;}
+.btn.ghost{background:transparent; border:none; color:var(--copper-dark); width:auto; padding:8px 4px;}
+.btn:disabled{opacity:0.4;}
+.row{display:flex; gap:10px;}
+.stat{
+  flex:1; border:1px solid var(--line); border-radius:3px; padding:12px 12px;
+  background:var(--card);
+}
+.stat .n{font-family:'Big Shoulders Display'; font-size:34px; color:var(--copper-dark); line-height:1;}
+.stat .l{font-size:12px; color:var(--stone); margin-top:4px;}
+.ring{
+  width:84px; height:84px; border-radius:50%; flex-shrink:0;
+  background: conic-gradient(var(--copper) calc(var(--pct)*1%), var(--line) 0%);
+  display:flex; align-items:center; justify-content:center;
+}
+.ring-inner{
+  width:66px; height:66px; border-radius:50%; background:var(--card);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.ring-num{font-family:'Big Shoulders Display'; font-size:17px; color:var(--copper-dark); line-height:1;}
+.ring-label{font-size:9px; color:var(--stone); margin-top:2px; text-transform:lowercase;}
+input[type=text], textarea, select{
+  width:100%; background:var(--paper); border:1px solid var(--line); color:var(--ink);
+  border-radius:2px; padding:11px 12px; font-size:16px; font-family:inherit;
+}
+label{font-size:12px; color:var(--stone); font-weight:600; display:block; margin-bottom:5px; margin-top:12px;}
+label:first-child{margin-top:0;}
+hr{border:none; border-top:1px solid var(--line); margin:14px 0;}
+.domlist{display:flex; flex-wrap:wrap; gap:7px; margin-top:10px;}
+.chip{
+  border:1px solid var(--line); border-radius:20px; padding:7px 13px; font-size:13px;
+  background:var(--card); color:var(--ink); display:flex; align-items:center; gap:7px;
+}
+.chip .n{color:var(--copper-dark); font-family:'JetBrains Mono'; font-size:11px;}
+.chip.active{border-color:var(--copper); color:var(--copper-dark);}
+.wordrow{
+  display:flex; justify-content:space-between; align-items:center; gap:10px;
+  padding:11px 0; border-bottom:1px solid var(--line);
+}
+.wordrow:last-child{border-bottom:none;}
+.wordrow .es{font-weight:600;}
+.wordrow .en{font-size:13px; color:var(--stone);}
+.lvl-dots{display:flex; gap:3px;}
+.lvl-dots span{width:5px; height:5px; border-radius:50%; background:var(--line);}
+.lvl-dots span.on{background:var(--verdigris);}
+.speak-btn{
+  border:1px solid var(--line); background:var(--card); border-radius:50%;
+  width:34px; height:34px; display:flex; align-items:center; justify-content:center;
+  color:var(--copper-dark); font-size:15px; flex-shrink:0;
+}
+.empty{color:var(--stone); font-size:14px; text-align:center; padding:30px 10px;}
+.progressbar{height:4px; background:var(--line); border-radius:2px; overflow:hidden; margin-bottom:18px;}
+.progressbar>div{height:100%; background:var(--copper);}
+
+/* ---- session card ---- */
+.session-card{
+  background:var(--card); border:1px solid var(--line); border-radius:4px;
+  padding:26px 20px; text-align:center; min-height:220px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+}
+.session-card .dom{position:absolute; top:14px; left:16px;}
+.session-card .prompt-label{font-size:12px; color:var(--stone); letter-spacing:0.02em;}
+.session-card .prompt{font-family:'Big Shoulders Display'; font-size:38px; color:var(--ink); line-height:1.05;}
+.session-card .sub{font-size:14px; color:var(--stone); font-style:italic; max-width:440px;}
+.mcq-grid{display:flex; flex-direction:column; gap:9px; width:100%; margin-top:6px;}
+.mcq-opt{
+  border:1px solid var(--line); background:var(--paper); border-radius:2px;
+  padding:13px 14px; text-align:left; font-size:15px; width:100%; color:var(--ink);
+}
+.mcq-opt.correct{border-color:var(--good); background:var(--good-bg);}
+.mcq-opt.wrong{border-color:var(--bad); background:var(--bad-bg);}
+.type-answer{width:100%; margin-top:6px; text-align:center; font-size:18px; padding:13px;}
+.feedback{
+  margin-top:4px; padding:12px 14px; border-radius:2px; font-size:14px; text-align:left; width:100%;
+}
+.feedback.good{background:var(--good-bg); color:var(--good);}
+.feedback.bad{background:var(--bad-bg); color:var(--bad);}
+.feedback .correction{color:var(--ink); font-weight:600; margin-top:4px;}
+.feedback .note{color:var(--stone); margin-top:6px; font-style:italic;}
+
+/* ---- verb table ---- */
+.vtable{width:100%; border-collapse:collapse; font-size:13px; margin-top:8px;}
+.vtable th{text-align:left; color:var(--stone); font-weight:600; padding:5px 6px; border-bottom:1px solid var(--line); font-size:11px;}
+.vtable td{padding:5px 6px; border-bottom:1px solid var(--line);}
+.vtable tr:last-child td{border-bottom:none;}
+.tensegroup{margin-top:16px;}
+.tensegroup h4{font-family:'Work Sans'; font-size:13px; font-weight:700; color:var(--copper-dark); text-transform:none;}
+
+.spinner{
+  width:22px; height:22px; border-radius:50%; border:2px solid var(--line);
+  border-top-color:var(--copper); animation:spin 0.8s linear infinite; margin:0 auto;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-line{color:var(--stone); font-size:14px; text-align:center; padding:24px 0;}
+
+::-webkit-scrollbar{width:0; height:0;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   SEED DATA
+   ============================================================ */
+const DOMAINS = [
+  {id:'weld', label:'Fabricación y soldadura'},
+  {id:'stone', label:'Piedra y talla'},
+  {id:'foundry', label:'Fundición'},
+  {id:'materials', label:'Materiales y acabados'},
+  {id:'eng', label:'Ingeniería y estructura'},
+  {id:'install', label:'Instalación y montaje'},
+  {id:'ship', label:'Envíos y logística'},
+  {id:'contract', label:'Contratos y presupuestos'},
+  {id:'client', label:'Conversación con clientes'},
+  {id:'general', label:'General'}
+];
+function domLabel(id){ const d=DOMAINS.find(d=>d.id===id); return d?d.label:id; }
+
+// s: spanish (with article for nouns) | e: english | g: gender m/f/'' | p: pos n/v/adj | d: domain | x: example sentence
+const SEED_WORDS = [
+// weld
+{s:'la soldadura',e:'weld / welding',g:'f',p:'n',d:'weld',x:'La soldadura quedó muy limpia.'},
+{s:'el soldador',e:'welder (person)',g:'m',p:'n',d:'weld',x:'El soldador terminó la pieza a tiempo.'},
+{s:'soldar',e:'to weld',g:'',p:'v',d:'weld',x:'Vamos a soldar esta unión mañana.'},
+{s:'el cordón de soldadura',e:'weld bead',g:'m',p:'n',d:'weld',x:'Revisa el cordón de soldadura antes de pintar.'},
+{s:'la lámina',e:'sheet metal',g:'f',p:'n',d:'weld',x:'Cortamos la lámina de acero inoxidable.'},
+{s:'el acero inoxidable',e:'stainless steel',g:'m',p:'n',d:'weld',x:'El acero inoxidable no se oxida fácilmente.'},
+{s:'la esmeriladora',e:'angle grinder',g:'f',p:'n',d:'weld',x:'Usa la esmeriladora para pulir el borde.'},
+{s:'el soplete',e:'torch',g:'m',p:'n',d:'weld',x:'El soplete corta el metal muy rápido.'},
+{s:'la chispa',e:'spark',g:'f',p:'n',d:'weld',x:'Cuidado con las chispas cerca del solvente.'},
+{s:'el electrodo',e:'welding electrode',g:'m',p:'n',d:'weld',x:'Cambiamos el electrodo cada media hora.'},
+// stone
+{s:'la piedra',e:'stone',g:'f',p:'n',d:'stone',x:'La piedra pesa más de lo que pensábamos.'},
+{s:'el mármol',e:'marble',g:'m',p:'n',d:'stone',x:'El mármol viene de Carrara.'},
+{s:'tallar',e:'to carve',g:'',p:'v',d:'stone',x:'Tallaron la figura en tres semanas.'},
+{s:'el cincel',e:'chisel',g:'m',p:'n',d:'stone',x:'El cantero usa un cincel fino para los detalles.'},
+{s:'el cantero',e:'stonemason',g:'m',p:'n',d:'stone',x:'El cantero lleva veinte años en el oficio.'},
+{s:'la cantera',e:'quarry',g:'f',p:'n',d:'stone',x:'El bloque salió de una cantera en Zacatecas.'},
+{s:'pulir',e:'to polish',g:'',p:'v',d:'stone',x:'Vamos a pulir la superficie mañana.'},
+{s:'la veta',e:'vein (in stone)',g:'f',p:'n',d:'stone',x:'Esa veta le da mucho carácter a la piedra.'},
+{s:'el bloque',e:'block',g:'m',p:'n',d:'stone',x:'El bloque llegó agrietado.'},
+{s:'el andamio',e:'scaffolding',g:'m',p:'n',d:'stone',x:'Montamos el andamio para llegar a la parte alta.'},
+// foundry
+{s:'la fundición',e:'foundry / casting',g:'f',p:'n',d:'foundry',x:'Enviamos las piezas a la fundición en Puebla.'},
+{s:'fundir',e:'to melt / cast',g:'',p:'v',d:'foundry',x:'Van a fundir el bronce mañana.'},
+{s:'el bronce',e:'bronze',g:'m',p:'n',d:'foundry',x:'El bronce se oscurece con el tiempo.'},
+{s:'el molde',e:'mold',g:'m',p:'n',d:'foundry',x:'El molde de silicón captura cada detalle.'},
+{s:'la cera perdida',e:'lost wax (casting method)',g:'f',p:'n',d:'foundry',x:'Usamos la técnica de cera perdida.'},
+{s:'verter',e:'to pour',g:'',p:'v',d:'foundry',x:'Vertieron el metal fundido con mucho cuidado.'},
+{s:'el crisol',e:'crucible',g:'m',p:'n',d:'foundry',x:'El crisol aguanta temperaturas extremas.'},
+{s:'la pátina',e:'patina',g:'f',p:'n',d:'foundry',x:'La pátina le da un tono verde azulado.'},
+{s:'el horno',e:'furnace / kiln',g:'m',p:'n',d:'foundry',x:'El horno alcanza mil grados.'},
+{s:'la pieza',e:'piece / part',g:'f',p:'n',d:'foundry',x:'Cada pieza se numera antes de enviarla.'},
+// materials
+{s:'la resina',e:'resin',g:'f',p:'n',d:'materials',x:'La resina tarda veinticuatro horas en curar.'},
+{s:'el cobre',e:'copper',g:'m',p:'n',d:'materials',x:'El cobre se oxida y toma un tono verde.'},
+{s:'el acabado',e:'finish',g:'m',p:'n',d:'materials',x:'El acabado mate se ve mejor bajo esta luz.'},
+{s:'el barniz',e:'varnish',g:'m',p:'n',d:'materials',x:'Aplicamos dos capas de barniz.'},
+{s:'la pintura',e:'paint',g:'f',p:'n',d:'materials',x:'La pintura industrial resiste la intemperie.'},
+{s:'lijar',e:'to sand',g:'',p:'v',d:'materials',x:'Hay que lijar antes de pintar.'},
+{s:'el pigmento',e:'pigment',g:'m',p:'n',d:'materials',x:'Mezclamos el pigmento directamente en la resina.'},
+{s:'impermeable',e:'waterproof',g:'',p:'adj',d:'materials',x:'Necesitamos un sellador impermeable.'},
+{s:'brillante',e:'glossy',g:'',p:'adj',d:'materials',x:'¿Lo quieres brillante o mate?'},
+{s:'mate',e:'matte',g:'',p:'adj',d:'materials',x:'Prefiero el acabado mate.'},
+// eng
+{s:'la estructura',e:'structure',g:'f',p:'n',d:'eng',x:'La estructura interna es de acero.'},
+{s:'el soporte',e:'support / bracket',g:'m',p:'n',d:'eng',x:'El soporte debe aguantar doscientos kilos.'},
+{s:'el peso',e:'weight',g:'m',p:'n',d:'eng',x:'El peso total supera la tonelada.'},
+{s:'la carga',e:'load',g:'f',p:'n',d:'eng',x:'Calculamos la carga máxima del piso.'},
+{s:'el plano',e:'blueprint',g:'m',p:'n',d:'eng',x:'El plano indica cada medida exacta.'},
+{s:'la medida',e:'measurement',g:'f',p:'n',d:'eng',x:'Verifica la medida dos veces.'},
+{s:'el ingeniero',e:'engineer',g:'m',p:'n',d:'eng',x:'La ingeniera aprobó el diseño.'},
+{s:'resistente',e:'sturdy / resistant',g:'',p:'adj',d:'eng',x:'El material es muy resistente al viento.'},
+{s:'el anclaje',e:'anchoring',g:'m',p:'n',d:'eng',x:'El anclaje va directo al concreto.'},
+{s:'la base de concreto',e:'concrete base',g:'f',p:'n',d:'eng',x:'La base de concreto necesita curar una semana.'},
+// install
+{s:'instalar',e:'to install',g:'',p:'v',d:'install',x:'Vamos a instalar la pieza el lunes.'},
+{s:'montar',e:'to assemble / mount',g:'',p:'v',d:'install',x:'Vamos a montar la pieza el lunes.'},
+{s:'la grúa',e:'crane',g:'f',p:'n',d:'install',x:'La grúa levanta hasta cinco toneladas.'},
+{s:'el montacargas',e:'forklift',g:'m',p:'n',d:'install',x:'El montacargas no cabe por esa puerta.'},
+{s:'las correas',e:'straps',g:'f',p:'n',d:'install',x:'Aseguramos la pieza con correas.'},
+{s:'el nivel',e:'level (tool)',g:'m',p:'n',d:'install',x:'Usa el nivel para que quede derecho.'},
+{s:'el sitio',e:'site',g:'m',p:'n',d:'install',x:'Llegamos al sitio a las ocho.'},
+{s:'levantar',e:'to lift',g:'',p:'v',d:'install',x:'Necesitamos tres personas para levantar esto.'},
+{s:'asegurar',e:'to secure',g:'',p:'v',d:'install',x:'Asegura bien los tornillos.'},
+{s:'el andamiaje',e:'scaffolding system',g:'m',p:'n',d:'install',x:'El andamiaje tarda un día en armarse.'},
+// ship
+{s:'enviar',e:'to send',g:'',p:'v',d:'ship',x:'Vamos a enviar la pieza el jueves.'},
+{s:'el envío',e:'shipment',g:'m',p:'n',d:'ship',x:'El envío llega la próxima semana.'},
+{s:'el embalaje',e:'packaging / crating',g:'m',p:'n',d:'ship',x:'El embalaje debe proteger las esquinas.'},
+{s:'la caja de madera',e:'wooden crate',g:'f',p:'n',d:'ship',x:'Construimos una caja de madera a la medida.'},
+{s:'el transportista',e:'carrier / shipper',g:'m',p:'n',d:'ship',x:'El transportista confirmó la hora de recogida.'},
+{s:'la aduana',e:'customs',g:'f',p:'n',d:'ship',x:'La pieza está detenida en la aduana.'},
+{s:'el seguro',e:'insurance',g:'m',p:'n',d:'ship',x:'El seguro cubre daños en tránsito.'},
+{s:'frágil',e:'fragile',g:'',p:'adj',d:'ship',x:'Marca la caja como frágil.'},
+{s:'la entrega',e:'delivery',g:'f',p:'n',d:'ship',x:'La entrega está programada para el viernes.'},
+{s:'el almacén',e:'warehouse',g:'m',p:'n',d:'ship',x:'Guardamos las piezas en el almacén.'},
+// contract
+{s:'la cotización',e:'quote',g:'f',p:'n',d:'contract',x:'Mandamos la cotización ayer.'},
+{s:'el presupuesto',e:'budget',g:'m',p:'n',d:'contract',x:'El presupuesto no incluye el envío.'},
+{s:'el contrato',e:'contract',g:'m',p:'n',d:'contract',x:'Firmamos el contrato la semana pasada.'},
+{s:'el anticipo',e:'deposit / advance payment',g:'m',p:'n',d:'contract',x:'Pidieron un anticipo del cincuenta por ciento.'},
+{s:'el plazo',e:'deadline / timeframe',g:'m',p:'n',d:'contract',x:'El plazo de entrega es de ocho semanas.'},
+{s:'la factura',e:'invoice',g:'f',p:'n',d:'contract',x:'Te mando la factura por correo.'},
+{s:'el costo',e:'cost',g:'m',p:'n',d:'contract',x:'El costo subió por el precio del acero.'},
+{s:'negociar',e:'to negotiate',g:'',p:'v',d:'contract',x:'Vamos a negociar el plazo.'},
+{s:'el cliente',e:'client',g:'m',p:'n',d:'contract',x:'El cliente quiere ver el avance.'},
+{s:'firmar',e:'to sign',g:'',p:'v',d:'contract',x:'Falta firmar el contrato.'},
+// client
+{s:'el avance',e:'progress',g:'m',p:'n',d:'client',x:'Te mando fotos del avance.'},
+{s:'la propuesta',e:'proposal',g:'f',p:'n',d:'client',x:'La propuesta incluye tres opciones de acabado.'},
+{s:'el boceto',e:'sketch',g:'m',p:'n',d:'client',x:'El boceto ya está aprobado.'},
+{s:'revisar',e:'to check / review',g:'',p:'v',d:'client',x:'Vamos a revisar los detalles el jueves.'},
+{s:'aprobar',e:'to approve',g:'',p:'v',d:'client',x:'El artista aprobó el color final.'},
+{s:'el cambio',e:'change',g:'m',p:'n',d:'client',x:'Hubo un cambio de último momento.'},
+{s:'la reunión',e:'meeting',g:'f',p:'n',d:'client',x:'Tenemos una reunión el jueves.'},
+{s:'explicar',e:'to explain',g:'',p:'v',d:'client',x:'Le voy a explicar el proceso.'},
+{s:'de acuerdo',e:'agreed / okay',g:'',p:'phrase',d:'client',x:'Quedamos de acuerdo en la fecha.'},
+{s:'el detalle',e:'detail',g:'m',p:'n',d:'client',x:'Cuida cada detalle del acabado.'}
+];
+
+// Full precomputed conjugations for the starter verb set.
+// Person order everywhere: [yo, tú, usted/él/ella, nosotros, ustedes/ellos]
+const SEED_VERBS = {
+ser:{en:'to be', c:{
+  presente:['soy','eres','es','somos','son'],
+  preterito:['fui','fuiste','fue','fuimos','fueron'],
+  imperfecto:['era','eras','era','éramos','eran'],
+  futuro:['seré','serás','será','seremos','serán'],
+  condicional:['sería','serías','sería','seríamos','serían'],
+  subjPresente:['sea','seas','sea','seamos','sean'],
+  subjImperfecto:['fuera','fueras','fuera','fuéramos','fueran'],
+  mandato:{usted:'sea',ustedes:'sean'}
+}},
+estar:{en:'to be (state/location)', c:{
+  presente:['estoy','estás','está','estamos','están'],
+  preterito:['estuve','estuviste','estuvo','estuvimos','estuvieron'],
+  imperfecto:['estaba','estabas','estaba','estábamos','estaban'],
+  futuro:['estaré','estarás','estará','estaremos','estarán'],
+  condicional:['estaría','estarías','estaría','estaríamos','estarían'],
+  subjPresente:['esté','estés','esté','estemos','estén'],
+  subjImperfecto:['estuviera','estuvieras','estuviera','estuviéramos','estuvieran'],
+  mandato:{usted:'esté',ustedes:'estén'}
+}},
+tener:{en:'to have', c:{
+  presente:['tengo','tienes','tiene','tenemos','tienen'],
+  preterito:['tuve','tuviste','tuvo','tuvimos','tuvieron'],
+  imperfecto:['tenía','tenías','tenía','teníamos','tenían'],
+  futuro:['tendré','tendrás','tendrá','tendremos','tendrán'],
+  condicional:['tendría','tendrías','tendría','tendríamos','tendrían'],
+  subjPresente:['tenga','tengas','tenga','tengamos','tengan'],
+  subjImperfecto:['tuviera','tuvieras','tuviera','tuviéramos','tuvieran'],
+  mandato:{usted:'tenga',ustedes:'tengan'}
+}},
+hacer:{en:'to do / make', c:{
+  presente:['hago','haces','hace','hacemos','hacen'],
+  preterito:['hice','hiciste','hizo','hicimos','hicieron'],
+  imperfecto:['hacía','hacías','hacía','hacíamos','hacían'],
+  futuro:['haré','harás','hará','haremos','harán'],
+  condicional:['haría','harías','haría','haríamos','harían'],
+  subjPresente:['haga','hagas','haga','hagamos','hagan'],
+  subjImperfecto:['hiciera','hicieras','hiciera','hiciéramos','hicieran'],
+  mandato:{usted:'haga',ustedes:'hagan'}
+}},
+poder:{en:'to be able to / can', c:{
+  presente:['puedo','puedes','puede','podemos','pueden'],
+  preterito:['pude','pudiste','pudo','pudimos','pudieron'],
+  imperfecto:['podía','podías','podía','podíamos','podían'],
+  futuro:['podré','podrás','podrá','podremos','podrán'],
+  condicional:['podría','podrías','podría','podríamos','podrían'],
+  subjPresente:['pueda','puedas','pueda','podamos','puedan'],
+  subjImperfecto:['pudiera','pudieras','pudiera','pudiéramos','pudieran'],
+  mandato:{usted:'pueda',ustedes:'puedan'}
+}},
+querer:{en:'to want', c:{
+  presente:['quiero','quieres','quiere','queremos','quieren'],
+  preterito:['quise','quisiste','quiso','quisimos','quisieron'],
+  imperfecto:['quería','querías','quería','queríamos','querían'],
+  futuro:['querré','querrás','querrá','querremos','querrán'],
+  condicional:['querría','querrías','querría','querríamos','querrían'],
+  subjPresente:['quiera','quieras','quiera','queramos','quieran'],
+  subjImperfecto:['quisiera','quisieras','quisiera','quisiéramos','quisieran'],
+  mandato:{usted:'quiera',ustedes:'quieran'}
+}},
+ir:{en:'to go', c:{
+  presente:['voy','vas','va','vamos','van'],
+  preterito:['fui','fuiste','fue','fuimos','fueron'],
+  imperfecto:['iba','ibas','iba','íbamos','iban'],
+  futuro:['iré','irás','irá','iremos','irán'],
+  condicional:['iría','irías','iría','iríamos','irían'],
+  subjPresente:['vaya','vayas','vaya','vayamos','vayan'],
+  subjImperfecto:['fuera','fueras','fuera','fuéramos','fueran'],
+  mandato:{usted:'vaya',ustedes:'vayan'}
+}},
+dar:{en:'to give', c:{
+  presente:['doy','das','da','damos','dan'],
+  preterito:['di','diste','dio','dimos','dieron'],
+  imperfecto:['daba','dabas','daba','dábamos','daban'],
+  futuro:['daré','darás','dará','daremos','darán'],
+  condicional:['daría','darías','daría','daríamos','darían'],
+  subjPresente:['dé','des','dé','demos','den'],
+  subjImperfecto:['diera','dieras','diera','diéramos','dieran'],
+  mandato:{usted:'dé',ustedes:'den'}
+}},
+decir:{en:'to say / tell', c:{
+  presente:['digo','dices','dice','decimos','dicen'],
+  preterito:['dije','dijiste','dijo','dijimos','dijeron'],
+  imperfecto:['decía','decías','decía','decíamos','decían'],
+  futuro:['diré','dirás','dirá','diremos','dirán'],
+  condicional:['diría','dirías','diría','diríamos','dirían'],
+  subjPresente:['diga','digas','diga','digamos','digan'],
+  subjImperfecto:['dijera','dijeras','dijera','dijéramos','dijeran'],
+  mandato:{usted:'diga',ustedes:'digan'}
+}},
+poner:{en:'to put', c:{
+  presente:['pongo','pones','pone','ponemos','ponen'],
+  preterito:['puse','pusiste','puso','pusimos','pusieron'],
+  imperfecto:['ponía','ponías','ponía','poníamos','ponían'],
+  futuro:['pondré','pondrás','pondrá','pondremos','pondrán'],
+  condicional:['pondría','pondrías','pondría','pondríamos','pondrían'],
+  subjPresente:['ponga','pongas','ponga','pongamos','pongan'],
+  subjImperfecto:['pusiera','pusieras','pusiera','pusiéramos','pusieran'],
+  mandato:{usted:'ponga',ustedes:'pongan'}
+}},
+saber:{en:'to know (a fact)', c:{
+  presente:['sé','sabes','sabe','sabemos','saben'],
+  preterito:['supe','supiste','supo','supimos','supieron'],
+  imperfecto:['sabía','sabías','sabía','sabíamos','sabían'],
+  futuro:['sabré','sabrás','sabrá','sabremos','sabrán'],
+  condicional:['sabría','sabrías','sabría','sabríamos','sabrían'],
+  subjPresente:['sepa','sepas','sepa','sepamos','sepan'],
+  subjImperfecto:['supiera','supieras','supiera','supiéramos','supieran'],
+  mandato:{usted:'sepa',ustedes:'sepan'}
+}},
+venir:{en:'to come', c:{
+  presente:['vengo','vienes','viene','venimos','vienen'],
+  preterito:['vine','viniste','vino','vinimos','vinieron'],
+  imperfecto:['venía','venías','venía','veníamos','venían'],
+  futuro:['vendré','vendrás','vendrá','vendremos','vendrán'],
+  condicional:['vendría','vendrías','vendría','vendríamos','vendrían'],
+  subjPresente:['venga','vengas','venga','vengamos','vengan'],
+  subjImperfecto:['viniera','vinieras','viniera','viniéramos','vinieran'],
+  mandato:{usted:'venga',ustedes:'vengan'}
+}},
+pedir:{en:'to ask for / order', c:{
+  presente:['pido','pides','pide','pedimos','piden'],
+  preterito:['pedí','pediste','pidió','pedimos','pidieron'],
+  imperfecto:['pedía','pedías','pedía','pedíamos','pedían'],
+  futuro:['pediré','pedirás','pedirá','pediremos','pedirán'],
+  condicional:['pediría','pedirías','pediría','pediríamos','pedirían'],
+  subjPresente:['pida','pidas','pida','pidamos','pidan'],
+  subjImperfecto:['pidiera','pidieras','pidiera','pidiéramos','pidieran'],
+  mandato:{usted:'pida',ustedes:'pidan'}
+}},
+soldar:{en:'to weld', c:{
+  presente:['sueldo','sueldas','suelda','soldamos','sueldan'],
+  preterito:['soldé','soldaste','soldó','soldamos','soldaron'],
+  imperfecto:['soldaba','soldabas','soldaba','soldábamos','soldaban'],
+  futuro:['soldaré','soldarás','soldará','soldaremos','soldarán'],
+  condicional:['soldaría','soldarías','soldaría','soldaríamos','soldarían'],
+  subjPresente:['suelde','sueldes','suelde','soldemos','suelden'],
+  subjImperfecto:['soldara','soldaras','soldara','soldáramos','soldaran'],
+  mandato:{usted:'suelde',ustedes:'suelden'}
+}},
+cortar:{en:'to cut', c:{
+  presente:['corto','cortas','corta','cortamos','cortan'],
+  preterito:['corté','cortaste','cortó','cortamos','cortaron'],
+  imperfecto:['cortaba','cortabas','cortaba','cortábamos','cortaban'],
+  futuro:['cortaré','cortarás','cortará','cortaremos','cortarán'],
+  condicional:['cortaría','cortarías','cortaría','cortaríamos','cortarían'],
+  subjPresente:['corte','cortes','corte','cortemos','corten'],
+  subjImperfecto:['cortara','cortaras','cortara','cortáramos','cortaran'],
+  mandato:{usted:'corte',ustedes:'corten'}
+}},
+entregar:{en:'to deliver', c:{
+  presente:['entrego','entregas','entrega','entregamos','entregan'],
+  preterito:['entregué','entregaste','entregó','entregamos','entregaron'],
+  imperfecto:['entregaba','entregabas','entregaba','entregábamos','entregaban'],
+  futuro:['entregaré','entregarás','entregará','entregaremos','entregarán'],
+  condicional:['entregaría','entregarías','entregaría','entregaríamos','entregarían'],
+  subjPresente:['entregue','entregues','entregue','entreguemos','entreguen'],
+  subjImperfecto:['entregara','entregaras','entregara','entregáramos','entregaran'],
+  mandato:{usted:'entregue',ustedes:'entreguen'}
+}},
+revisar:{en:'to check / inspect', c:{
+  presente:['reviso','revisas','revisa','revisamos','revisan'],
+  preterito:['revisé','revisaste','revisó','revisamos','revisaron'],
+  imperfecto:['revisaba','revisabas','revisaba','revisábamos','revisaban'],
+  futuro:['revisaré','revisarás','revisará','revisaremos','revisarán'],
+  condicional:['revisaría','revisarías','revisaría','revisaríamos','revisarían'],
+  subjPresente:['revise','revises','revise','revisemos','revisen'],
+  subjImperfecto:['revisara','revisaras','revisara','revisáramos','revisaran'],
+  mandato:{usted:'revise',ustedes:'revisen'}
+}},
+necesitar:{en:'to need', c:{
+  presente:['necesito','necesitas','necesita','necesitamos','necesitan'],
+  preterito:['necesité','necesitaste','necesitó','necesitamos','necesitaron'],
+  imperfecto:['necesitaba','necesitabas','necesitaba','necesitábamos','necesitaban'],
+  futuro:['necesitaré','necesitarás','necesitará','necesitaremos','necesitarán'],
+  condicional:['necesitaría','necesitarías','necesitaría','necesitaríamos','necesitarían'],
+  subjPresente:['necesite','necesites','necesite','necesitemos','necesiten'],
+  subjImperfecto:['necesitara','necesitaras','necesitara','necesitáramos','necesitaran'],
+  mandato:{usted:'necesite',ustedes:'necesiten'}
+}},
+enviar:{en:'to send', c:{
+  presente:['envío','envías','envía','enviamos','envían'],
+  preterito:['envié','enviaste','envió','enviamos','enviaron'],
+  imperfecto:['enviaba','enviabas','enviaba','enviábamos','enviaban'],
+  futuro:['enviaré','enviarás','enviará','enviaremos','enviarán'],
+  condicional:['enviaría','enviarías','enviaría','enviaríamos','enviarían'],
+  subjPresente:['envíe','envíes','envíe','enviemos','envíen'],
+  subjImperfecto:['enviara','enviaras','enviara','enviáramos','enviaran'],
+  mandato:{usted:'envíe',ustedes:'envíen'}
+}},
+fabricar:{en:'to fabricate / manufacture', c:{
+  presente:['fabrico','fabricas','fabrica','fabricamos','fabrican'],
+  preterito:['fabriqué','fabricaste','fabricó','fabricamos','fabricaron'],
+  imperfecto:['fabricaba','fabricabas','fabricaba','fabricábamos','fabricaban'],
+  futuro:['fabricaré','fabricarás','fabricará','fabricaremos','fabricarán'],
+  condicional:['fabricaría','fabricarías','fabricaría','fabricaríamos','fabricarían'],
+  subjPresente:['fabrique','fabriques','fabrique','fabriquemos','fabriquen'],
+  subjImperfecto:['fabricara','fabricaras','fabricara','fabricáramos','fabricaran'],
+  mandato:{usted:'fabrique',ustedes:'fabriquen'}
+}},
+cotizar:{en:'to quote (a price)', c:{
+  presente:['cotizo','cotizas','cotiza','cotizamos','cotizan'],
+  preterito:['coticé','cotizaste','cotizó','cotizamos','cotizaron'],
+  imperfecto:['cotizaba','cotizabas','cotizaba','cotizábamos','cotizaban'],
+  futuro:['cotizaré','cotizarás','cotizará','cotizaremos','cotizarán'],
+  condicional:['cotizaría','cotizarías','cotizaría','cotizaríamos','cotizarían'],
+  subjPresente:['cotice','cotices','cotice','coticemos','coticen'],
+  subjImperfecto:['cotizara','cotizaras','cotizara','cotizáramos','cotizaran'],
+  mandato:{usted:'cotice',ustedes:'coticen'}
+}}
+};
+
+const TENSE_LABELS = {
+  presente:'Presente', preterito:'Pretérito', imperfecto:'Imperfecto',
+  futuro:'Futuro', condicional:'Condicional', subjPresente:'Subjuntivo presente',
+  subjImperfecto:'Subjuntivo imperfecto'
+};
+const TENSE_KEYS = Object.keys(TENSE_LABELS);
+const PERSONS = ['yo','tú','usted','nosotros','ustedes'];
+
+// Grammar lessons. Each lesson is either "choice" (pick between two given
+// forms — labels[0]/labels[1]) or "type" (type the correct form yourself).
+// "type" blanks carry a `hint` (infinitive + who) shown in place of wrongAns.
+const LESSONS = {
+
+pretimp: {
+  title:'Pretérito vs. imperfecto',
+  blurb:'Pretérito is the finished, bounded event; imperfecto is the background it happened against — description, habits, or an action already in progress.',
+  mode:'choice', labels:['pretérito','imperfecto'],
+  sets:[
+    { title:'La entrega en Miami', blanks:[
+      {before:'Cuando llegamos al sitio, ', ans:'eran', wrongAns:'fueron', after:' las siete de la mañana.', why:'“Eran las siete” sets the time in the background — imperfect, not preterite.'},
+      {before:'El cliente ', ans:'esperaba', wrongAns:'esperó', after:' en la entrada cuando llegó la grúa.', why:'Already in the middle of waiting when the crane arrived — imperfect for the background action.'},
+      {before:'La grúa ', ans:'llegó', wrongAns:'llegaba', after:' a las siete y media.', why:'A single, completed arrival at a specific point — preterite.'},
+      {before:'Nosotros ', ans:'instalamos', wrongAns:'instalábamos', after:' la pieza en dos horas.', why:'A bounded, completed action with a clear end — preterite.'},
+      {before:'Mientras trabajábamos, ', ans:'hacía', wrongAns:'hizo', after:' mucho calor.', why:'Weather / background description — imperfect.'},
+      {before:'De repente, ', ans:'empezó', wrongAns:'empezaba', after:' a llover.', why:'“De repente” signals a sudden, bounded event — preterite.'},
+    ]},
+    { title:'Una llamada con el artista', blanks:[
+      {before:'El artista me ', ans:'llamó', wrongAns:'llamaba', after:' el martes por la tarde.', why:'One specific, completed phone call — preterite.'},
+      {before:'Yo ', ans:'estaba', wrongAns:'estuve', after:' en el taller cuando sonó el teléfono.', why:'Ongoing state interrupted by an event — imperfect.'},
+      {before:'Me ', ans:'preguntó', wrongAns:'preguntaba', after:' si el bronce ya estaba listo.', why:'A single completed question — preterite.'},
+      {before:'Antes, nosotros siempre ', ans:'usábamos', wrongAns:'usamos', after:' el mismo proveedor de resina.', why:'“Siempre” signals a repeated habit in the past — imperfect.'},
+      {before:'Pero el año pasado ', ans:'cambiamos', wrongAns:'cambiábamos', after:' de proveedor.', why:'A one-time completed change, bounded in time — preterite.'},
+    ]}
+  ]
+},
+
+serestar: {
+  title:'Ser vs. estar',
+  blurb:'Ser names what something IS — identity, profession, origin, inherent traits, and the time/place of an event. Estar names a location, or a temporary or resulting state.',
+  mode:'choice', labels:['ser','estar'],
+  sets:[
+    { title:'En el taller', blanks:[
+      {before:'El taller ', ans:'está', wrongAns:'es', after:' cerca del puerto.', why:'Physical location — estar.'},
+      {before:'Mi socio ', ans:'es', wrongAns:'está', after:' ingeniero.', why:'Profession / identity — ser.'},
+      {before:'La pieza ya ', ans:'está', wrongAns:'es', after:' lista para enviar.', why:'A resulting, temporary state — estar.'},
+      {before:'El bronce ', ans:'es', wrongAns:'está', after:' muy pesado.', why:'An inherent characteristic of the material — ser.'},
+      {before:'Ahora mismo el cliente ', ans:'está', wrongAns:'es', after:' muy contento con el avance.', why:'A temporary emotional state — estar.'},
+      {before:'La reunión ', ans:'es', wrongAns:'está', after:' el jueves a las diez.', why:'The time/place of an EVENT always takes ser, even though it feels like a location.'},
+    ]}
+  ]
+},
+
+porpara: {
+  title:'Por vs. para',
+  blurb:'Por: means, cause/reason, duration, "through/during". Para: deadline, purpose, destination, recipient.',
+  mode:'choice', labels:['por','para'],
+  sets:[
+    { title:'Cotizando un envío', blanks:[
+      {before:'Mandamos la pieza ', ans:'por', wrongAns:'para', after:' barco.', why:'The means of transport — por.'},
+      {before:'Necesitamos el diseño ', ans:'para', wrongAns:'por', after:' el viernes.', why:'A deadline — para.'},
+      {before:'Trabajamos ', ans:'por', wrongAns:'para', after:' la noche para terminar a tiempo.', why:'Duration / stretch of time — por.'},
+      {before:'Este sellador es ', ans:'para', wrongAns:'por', after:' instalación exterior.', why:'Purpose / what it\u2019s for — para.'},
+      {before:'Gracias ', ans:'por', wrongAns:'para', after:' tu ayuda con el embalaje.', why:'Reason / cause — por.'},
+      {before:'El presupuesto es ', ans:'para', wrongAns:'por', after:' el cliente en Doha.', why:'The recipient — para.'},
+    ]}
+  ]
+},
+
+subjtriggers: {
+  title:'Disparadores del subjuntivo',
+  blurb:'These phrases force the subjunctive in the clause that follows: quiero que, es necesario que, para que, antes de que, and cuando (when it points to something not yet real).',
+  mode:'type',
+  sets:[
+    { title:'Coordinando la instalación', blanks:[
+      {before:'Es necesario que el equipo ', hint:'llegar', ans:'llegue', after:' antes de las ocho.', why:'“Es necesario que” always triggers the subjunctive.'},
+      {before:'Quiero que ustedes ', hint:'revisar', ans:'revisen', after:' el plano antes de firmar.', why:'“Quiero que” expresses a wish imposed on someone else — subjunctive.'},
+      {before:'Vamos a reforzar la base para que la escultura no ', hint:'moverse', ans:'se mueva', after:' con el viento.', why:'“Para que” (so that) always triggers the subjunctive.'},
+      {before:'Avísame antes de que el camión ', hint:'salir', ans:'salga', after:' del taller.', why:'“Antes de que” always triggers the subjunctive.'},
+      {before:'Cuando el cliente ', hint:'llegar', ans:'llegue', after:', le mostramos el avance.', why:'“Cuando” takes the subjunctive when it points to a future event that hasn\u2019t happened yet.'},
+      {before:'Es necesario que nosotros ', hint:'confirmar', ans:'confirmemos', after:' el presupuesto hoy.', why:'“Es necesario que” + nosotros — subjunctive.'},
+    ]}
+  ]
+},
+
+siclauses: {
+  title:'Oraciones con si',
+  blurb:'For a hypothetical or contrary-to-fact situation: si + imperfect subjunctive, ... conditional. Either clause can carry the blank.',
+  mode:'type',
+  sets:[
+    { title:'Si tuviéramos más tiempo', blanks:[
+      {before:'Si ', hint:'tener (nosotros)', ans:'tuviéramos', after:' más tiempo, lo soldaríamos aquí mismo.', why:'The "si" clause takes the imperfect subjunctive.'},
+      {before:'Si el cliente ', hint:'pedir', ans:'pidiera', after:' un cambio, tendríamos que cotizar de nuevo.', why:'The "si" clause takes the imperfect subjunctive.'},
+      {before:'Lo instalaríamos hoy si la grúa ', hint:'llegar', ans:'llegara', after:' a tiempo.', why:'The "si" clause takes the imperfect subjunctive, even when it comes second.'},
+      {before:'Si nosotros ', hint:'poder', ans:'pudiéramos', after:' conseguir el material antes, empezaríamos la semana que viene.', why:'The "si" clause takes the imperfect subjunctive.'},
+      {before:'Si hubiera más presupuesto, nosotros ', hint:'usar', ans:'usaríamos', after:' bronce en vez de resina.', why:'The result clause takes the conditional — this is the blank on the OTHER side of "si".'},
+      {before:'Terminaríamos antes si ustedes ', hint:'empezar', ans:'empezaran', after:' el lunes.', why:'The "si" clause takes the imperfect subjunctive.'},
+    ]}
+  ]
+},
+
+se: {
+  title:'Los usos de se',
+  blurb:'Three uses to tell apart: passive/impersonal se (no one specific did it), accidental se (unplanned events — “it fell on me”), and pronoun-stacking se (le/les + lo/la becomes se lo/se la).',
+  mode:'type',
+  sets:[
+    { title:'En el taller y en la entrega', blanks:[
+      {before:'Ayer ', hint:'cortar (pasivo)', ans:'se cortaron', after:' todas las piezas de metal.', why:'Passive/impersonal se — the pieces got cut, no specific agent named. Plural subject, plural verb.'},
+      {before:'', hint:'caer (a mí)', ans:'se me cayó', after:' la herramienta durante la instalación.', why:'Accidental se: “it fell on me” instead of blaming yourself directly — se + me + cayó.'},
+      {before:'', hint:'romper (a nosotros)', ans:'se nos rompieron', after:' dos piezas de resina en el envío.', why:'Accidental se, plural: dos piezas is plural, so the verb is too — se + nos + rompieron.'},
+      {before:'El cliente pidió la cotización. ', hint:'mandar (yo, a él) — la cotización', ans:'se la mando', after:' mañana.', why:'Pronoun stacking: le (to him) + la (the quote) can\u2019t both start with L, so le becomes se — se la mando.'},
+      {before:'Mi jefe quiere el reporte. ', hint:'enviar (yo, a él) — el reporte', ans:'se lo envío', after:' hoy mismo.', why:'Le (to him) + lo (the report, masculine) → se lo envío.'},
+      {before:'En este taller ', hint:'fabricar (pasivo)', ans:'se fabrican', after:' las bases de concreto en sitio.', why:'Passive/impersonal se — bases is plural, so fabrican is plural too.'},
+    ]}
+  ]
+},
+
+register: {
+  title:'Registro profesional y estilo indirecto',
+  blurb:'Quisiera / podría soften a request in professional Spanish. Reported speech (dijo que…) shifts the tense: future → conditional, present → imperfect.',
+  mode:'type',
+  sets:[
+    { title:'Con clientes y colegas', blanks:[
+      {before:'', hint:'querer, forma cortés', ans:'quisiera', after:' confirmar la fecha de entrega.', why:'“Quisiera” is the standard polite, professional softening of “quiero”.'},
+      {before:'¿', hint:'poder, forma cortés', ans:'podría', after:' enviarme la cotización actualizada?', why:'“Podría” softens a request more than “puede”.'},
+      {before:'El cliente dijo: “Llegaré el lunes.” → El cliente dijo que ', hint:'llegar', ans:'llegaría', after:' el lunes.', why:'Reported speech shifts future → conditional.'},
+      {before:'El ingeniero dijo: “El diseño está listo.” → El ingeniero dijo que el diseño ', hint:'estar', ans:'estaba', after:' listo.', why:'Reported speech shifts present → imperfect.'},
+      {before:'Ella dijo: “Firmo mañana.” → Ella dijo que ', hint:'firmar', ans:'firmaba', after:' al día siguiente.', why:'Even a present tense used for the near future shifts to imperfect in reported speech.'},
+      {before:'', hint:'querer, forma cortés, nosotros', ans:'quisiéramos', after:' programar la instalación para la próxima semana.', why:'“Quisiéramos” — the nosotros form of the same polite softening.'},
+    ]}
+  ]
+}
+};
+const LESSON_ORDER = ['pretimp','serestar','porpara','subjtriggers','siclauses','se','register'];
+
+/* ============================================================
+   TTS
+   ============================================================ */
+let voicesCache = [];
+function loadVoices(){ voicesCache = window.speechSynthesis ? speechSynthesis.getVoices() : []; }
+if('speechSynthesis' in window){
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+function speak(text){ speakLang(text, 'es-MX'); }
+function speakLang(text, lang){
+  try{
+    if(!('speechSynthesis' in window) || !text) return;
+    const u = new SpeechSynthesisUtterance(text);
+    const v = voicesCache.find(v=>v.lang===lang) || voicesCache.find(v=>v.lang && v.lang.toLowerCase().startsWith(lang.slice(0,2)));
+    if(v) u.voice = v;
+    u.lang = lang;
+    u.rate = 0.92;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  }catch(e){ /* ignore */ }
+}
+function speakBtn(text){
+  return '<button class="speak-btn" data-speak="'+escAttr(text)+'" aria-label="Escuchar">\u{1F50A}</button>';
+}
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+function stripArticle(s){ return s.replace(/^(el|la|los|las)\s+/i,''); }
+function stripAccents(s){ return s.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function normalize(s){ return stripAccents((s||'').toLowerCase().trim().replace(/\s+/g,' ')); }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function uid8(){ return Math.random().toString(36).slice(2,10); }
+function now(){ return Date.now(); }
+
+const LEVEL_MS = [
+  4*3600*1000, 12*3600*1000, 1*86400000, 3*86400000, 7*86400000,
+  14*86400000, 30*86400000, 90*86400000, 180*86400000
+];
+function nextReviewFor(level){ const i = Math.max(0, Math.min(level, LEVEL_MS.length-1)); return now() + LEVEL_MS[i]; }
+function cardTypeForLevel(level){ if(level<=0) return 'mcq'; if(level<=3) return 'type'; return 'audio'; }
+const MASTER_LEVEL = 6; // level a word/verb-tense must reach to count as "mastered"
+function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function daysBetween(a,b){ return Math.round((new Date(b)-new Date(a))/86400000); }
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const S = {
+  view:'loading',
+  uid:null,
+  db:null,
+  sample:null,
+  words:[],
+  verbs:{},          // infinitive -> {en, c, source}
+  verbCards:[],       // {infinitive, tense, level, nextReview}
+  profile:null,
+  session:null,       // active vocab review session
+  verbSession:null,   // active verb drill session
+  pimsleurSession:null, // active audio-only practice session
+  grammarSets:[],     // extra AI-generated stories
+  filterDomain:'all',
+  toast:null,
+};
+
+function byId(id){ return document.getElementById(id); }
+
+/* ============================================================
+   LOCAL DATABASE (localStorage-backed, Firestore-like interface)
+   Everything below reproduces the doc()/collection()/get()/set()/
+   update()/add() surface the app's logic already uses, so nothing
+   else in this file needs to change. Data lives only in this
+   browser, on this device — there is no account or sync.
+   ============================================================ */
+const LocalDB = (function(){
+  const KEY = 'tallerEspanol:db:v1';
+  function loadStore(){ try{ return JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){ return {}; } }
+  function saveStore(store){ try{ localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){ /* storage full or unavailable */ } }
+  function newId(){ return Math.random().toString(36).slice(2,10)+Date.now().toString(36); }
+  function docRef(path){
+    return {
+      async get(){
+        const store = loadStore();
+        const data = store[path];
+        return { exists: data!==undefined, data:()=>data };
+      },
+      async set(data){ const store=loadStore(); store[path]=Object.assign({},data); saveStore(store); return true; },
+      async update(patch){ const store=loadStore(); store[path]=Object.assign({}, store[path]||{}, patch); saveStore(store); return true; },
+      collection(name){
+        const base = path+'/'+name+'/';
+        return {
+          doc(id){ return docRef(base+id); },
+          async add(data){ const id=newId(); const store=loadStore(); store[base+id]=Object.assign({},data); saveStore(store); return {id}; },
+          async get(){
+            const store = loadStore();
+            const docs = Object.keys(store)
+              .filter(k=>k.startsWith(base) && !k.slice(base.length).includes('/'))
+              .map(k=>({id:k.slice(base.length), data:()=>store[k]}));
+            return {docs};
+          }
+        };
+      }
+    };
+  }
+  return {doc:docRef};
+})();
+
+/* ============================================================
+   BRING-YOUR-OWN ANTHROPIC API KEY
+   Powers the "Complete with Claude" buttons (word/verb autofill,
+   extra grammar exercises). Entirely optional — everything else
+   in the app works with no key at all. The key lives only in
+   this browser's localStorage and is sent only to api.anthropic.com.
+   ============================================================ */
+function getApiKey(){ try{ return localStorage.getItem('tallerEspanol:apiKey')||''; }catch(e){ return ''; } }
+function setApiKey(k){ try{ localStorage.setItem('tallerEspanol:apiKey', k.trim()); }catch(e){} }
+function hasApiKey(){ return !!getApiKey(); }
+async function callClaude(prompt){
+  const key = getApiKey();
+  if(!key) throw new Error('no-key');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{
+      'content-type':'application/json',
+      'x-api-key':key,
+      'anthropic-version':'2023-06-01',
+      'anthropic-dangerous-direct-browser-access':'true'
+    },
+    body: JSON.stringify({
+      model:'claude-haiku-4-5-20251001',
+      max_tokens:1200,
+      messages:[{role:'user', content:prompt}]
+    })
+  });
+  if(!res.ok) throw new Error('api-error-'+res.status);
+  const data = await res.json();
+  const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+  const cleaned = text.replace(/```json|```/g,'').trim();
+  return JSON.parse(cleaned);
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+async function init(){
+  render();
+  S.db = LocalDB;
+  S.uid = 'local';
+  await loadOrSeed();
+  S.view = 'home';
+  render();
+}
+function profileRef(){ return S.db.doc('data/users/'+S.uid+'/profile'); }
+
+async function loadOrSeed(){
+  const snap = await profileRef().get();
+  if(!snap.exists || !snap.data() || !snap.data().seeded){
+    await seedData();
+  } else {
+    S.profile = snap.data();
+  }
+  await loadAll();
+}
+
+async function seedData(){
+  S.view = 'seeding';
+  render();
+  const wordsCol = profileRef().collection('words');
+  const verbsCol = profileRef().collection('verbs');
+  // words in chunks
+  for(let i=0;i<SEED_WORDS.length;i+=8){
+    const chunk = SEED_WORDS.slice(i,i+8);
+    await Promise.all(chunk.map(w=>{
+      const id = uid8();
+      return wordsCol.doc(id).set({
+        es:w.s, en:w.e, gender:w.g, pos:w.p, domain:w.d, example:w.x,
+        level:-1, nextReview: now(), createdAt: now()
+      });
+    }));
+  }
+  const verbEntries = Object.entries(SEED_VERBS);
+  for(let i=0;i<verbEntries.length;i+=6){
+    const chunk = verbEntries.slice(i,i+6);
+    await Promise.all(chunk.map(([inf,v])=>{
+      return verbsCol.doc(inf).set({infinitive:inf, en:v.en, c:v.c, source:'seed', createdAt: now()});
+    }));
+  }
+  await profileRef().set({seeded:true, createdAt:now(), streak:0, lastActive:now()});
+}
+
+async function loadAll(){
+  const wordsCol = profileRef().collection('words');
+  const verbsCol = profileRef().collection('verbs');
+  const verbCardsCol = profileRef().collection('verbCards');
+  const grammarCol = profileRef().collection('grammarSets');
+  const [wSnap, vSnap, vcSnap, gSnap, pSnap] = await Promise.all([
+    wordsCol.get(), verbsCol.get(), verbCardsCol.get(), grammarCol.get(), profileRef().get()
+  ]);
+  S.words = wSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  S.verbs = {};
+  vSnap.docs.forEach(d=>{ S.verbs[d.id] = d.data(); });
+  S.verbCards = vcSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  S.grammarSets = gSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  const PROFILE_DEFAULTS = {dailyGoal:20, todayDate:'', todayCount:0, streak:0, lastCompletedDate:null, milestonesSeen:[], pendingCelebrations:[]};
+  S.profile = Object.assign({}, PROFILE_DEFAULTS, pSnap.exists ? pSnap.data() : {});
+  ensureVerbCards();
+}
+
+// Make sure every verb+tense pair has a review card (new verbs get seeded due-now)
+function ensureVerbCards(){
+  const have = new Set(S.verbCards.map(c=>c.infinitive+'|'+c.tense));
+  const missing = [];
+  Object.keys(S.verbs).forEach(inf=>{
+    TENSE_KEYS.forEach(t=>{
+      const key = inf+'|'+t;
+      if(!have.has(key)) missing.push({infinitive:inf, tense:t});
+    });
+  });
+  missing.forEach(m=>{
+    const localCard = {id:null, infinitive:m.infinitive, tense:m.tense, level:-1, nextReview:now()};
+    S.verbCards.push(localCard);
+  });
+  if(missing.length){ persistMissingVerbCards(missing); }
+}
+async function persistMissingVerbCards(missing){
+  const col = profileRef().collection('verbCards');
+  for(let i=0;i<missing.length;i+=8){
+    const chunk = missing.slice(i,i+8);
+    await Promise.all(chunk.map(async m=>{
+      const ref = await col.add({infinitive:m.infinitive, tense:m.tense, level:-1, nextReview:now()});
+      const c = S.verbCards.find(c=>c.infinitive===m.infinitive && c.tense===m.tense && !c.id);
+      if(c) c.id = ref.id;
+    }));
+  }
+}
+
+/* ============================================================
+   DERIVED
+   ============================================================ */
+function dueWords(){ return S.words.filter(w=>w.nextReview<=now()); }
+function dueVerbCards(){ return S.verbCards.filter(c=>c.nextReview<=now()); }
+function wordsInDomain(dom){ return dom==='all' ? S.words : S.words.filter(w=>w.domain===dom); }
+function domainCounts(){
+  const m = {};
+  DOMAINS.forEach(d=>m[d.id]=0);
+  S.words.forEach(w=>{ m[w.domain]=(m[w.domain]||0)+1; });
+  return m;
+}
+
+/* ============================================================
+   RENDER SHELL
+   ============================================================ */
+function render(){
+  const app = byId('app');
+  if(S.view==='loading'){
+    app.innerHTML = '<div class="loading-line" style="padding-top:40vh"><div class="spinner"></div><div style="margin-top:14px">Abriendo el taller…</div></div>';
+    return;
+  }
+  if(S.view==='seeding'){
+    app.innerHTML = '<div class="loading-line" style="padding-top:40vh"><div class="spinner"></div><div style="margin-top:14px">Preparando tu vocabulario de KAP…</div></div>';
+    return;
+  }
+
+  const due = dueWords().length;
+  const dueV = dueVerbCards().length;
+
+  let body = '';
+  if(S.session) body = renderSession();
+  else if(S.verbSession) body = renderVerbSession();
+  else if(S.pimsleurSession) body = renderPimsleurSession();
+  else if(S.view==='home') body = renderHome();
+  else if(S.view==='vocab') body = renderVocab();
+  else if(S.view==='verbs') body = renderVerbs();
+  else if(S.view==='grammar') body = renderGrammar();
+  else if(S.view==='add') body = renderAdd();
+
+  app.innerHTML =
+    '<div class="topbar"><div class="brand">Taller de Español</div>'+
+    '<div class="streak">'+(S.profile&&S.profile.streak?S.profile.streak+' días seguidos':'—')+'</div></div>'+
+    '<main>'+body+'</main>'+
+    (S.session || S.verbSession || S.pimsleurSession ? '' : renderTabbar());
+  attachHandlers();
+}
+
+function renderTabbar(){
+  function tab(id, icon, label){
+    return '<button data-nav="'+id+'" class="'+(S.view===id?'active':'')+'"><span class="ic">'+icon+'</span>'+label+'</button>';
+  }
+  return '<div class="tabbar">'+
+    tab('home','\u{1F3E0}','Inicio')+
+    tab('vocab','\u{1F5C2}\uFE0F','Vocabulario')+
+    tab('verbs','\u{1F501}','Verbos')+
+    tab('grammar','\u{1F4D8}','Gramática')+
+    tab('add','\u{2795}','Agregar')+
+    '</div>';
+}
+
+/* ============================================================
+   HOME
+   ============================================================ */
+function renderCelebrations(){
+  const items = (S.profile && S.profile.pendingCelebrations) || [];
+  if(!items.length) return '';
+  return '<div class="panel" style="border-color:var(--copper); margin-bottom:16px">'+
+    '<div style="font-size:11px; color:var(--copper-dark); font-weight:700; letter-spacing:0.03em; margin-bottom:8px">LOGRO</div>'+
+    items.map(m=>'<div style="font-family:\'Big Shoulders Display\'; font-size:23px; line-height:1.25">'+esc(m.label)+'</div>').join('')+
+    '<button class="btn secondary" data-action="dismiss-celebration" style="margin-top:12px">Entendido</button>'+
+  '</div>';
+}
+function renderGoalRing(){
+  const p = S.profile || {};
+  const goal = p.dailyGoal || 20;
+  const t = todayStr();
+  const count = (p.todayDate===t) ? (p.todayCount||0) : 0;
+  const pct = Math.min(100, Math.round(100*count/goal));
+  return '<div class="panel" style="display:flex; align-items:center; gap:16px; margin-bottom:14px">'+
+    '<div class="ring" style="--pct:'+pct+'"><div class="ring-inner"><div class="ring-num">'+count+'/'+goal+'</div><div class="ring-label">hoy</div></div></div>'+
+    '<div>'+
+      '<div style="font-family:\'Big Shoulders Display\'; font-size:22px; color:var(--copper-dark)">'+(count>=goal?'Meta cumplida':'Meta del día')+'</div>'+
+      '<div style="color:var(--stone); font-size:13px">'+(count>=goal?'Vuelve mañana para seguir la racha.':(goal-count)+' repasos para llegar a la meta.')+'</div>'+
+    '</div>'+
+  '</div>';
+}
+function renderMasteryProgress(){
+  const inUse = DOMAINS.filter(d=>S.words.some(w=>w.domain===d.id));
+  if(!inUse.length) return '';
+  return '<div class="panel">'+
+    '<h3 style="font-size:18px; color:var(--copper-dark); margin-bottom:10px">Dominio por área</h3>'+
+    inUse.map(d=>{
+      const inDom = S.words.filter(w=>w.domain===d.id);
+      const mastered = inDom.filter(w=>w.level>=MASTER_LEVEL).length;
+      const pct = Math.round(100*mastered/inDom.length);
+      return '<div style="margin-bottom:10px">'+
+        '<div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px">'+
+          '<span>'+d.label+'</span><span class="mono" style="color:var(--stone)">'+mastered+'/'+inDom.length+'</span>'+
+        '</div>'+
+        '<div style="height:5px; background:var(--line); border-radius:3px; overflow:hidden">'+
+          '<div style="height:100%; width:'+pct+'%; background:var(--verdigris)"></div>'+
+        '</div>'+
+      '</div>';
+    }).join('')+
+  '</div>';
+}
+function renderHome(){
+  const due = dueWords().length;
+  const dueV = dueVerbCards().length;
+  const total = S.words.length;
+  return ''+
+  renderCelebrations()+
+  renderGoalRing()+
+  '<div class="row" style="margin-bottom:14px">'+
+    '<div class="stat"><div class="n">'+due+'</div><div class="l">palabras por repasar</div></div>'+
+    '<div class="stat"><div class="n">'+dueV+'</div><div class="l">verbos por repasar</div></div>'+
+  '</div>'+
+  '<button class="btn copper" data-action="start-review" '+(due===0?'disabled':'')+' style="margin-bottom:10px">'+(due>0?'Repasar vocabulario ('+due+')':'Vocabulario al día')+'</button>'+
+  '<button class="btn secondary" data-action="start-verbdrill" '+(dueV===0?'disabled':'')+' style="margin-bottom:10px">'+(dueV>0?'Repasar verbos ('+dueV+')':'Verbos al día')+'</button>'+
+  '<button class="btn secondary" data-action="start-pimsleur">Práctica oral &middot; modo Pimsleur</button>'+
+  '<div style="margin-top:20px">'+renderMasteryProgress()+'</div>'+
+  '<div class="panel"><h3 style="font-size:18px; color:var(--copper-dark); margin-bottom:6px">Total</h3>'+
+    '<div style="color:var(--stone); font-size:14px">'+total+' palabras &middot; '+Object.keys(S.verbs).length+' verbos guardados</div>'+
+  '</div>';
+}
+
+/* ============================================================
+   VOCAB TAB (browse + start review)
+   ============================================================ */
+function renderVocab(){
+  const due = dueWords().length;
+  const list = wordsInDomain(S.filterDomain).slice().sort((a,b)=> (a.es>b.es?1:-1));
+  return ''+
+  '<button class="btn copper" data-action="start-review" '+(due===0?'disabled':'')+' style="margin-bottom:16px">'+(due>0?'Repasar ahora ('+due+')':'Todo al día')+'</button>'+
+  '<div class="domlist" style="margin-bottom:6px">'+
+    '<span class="chip '+(S.filterDomain==='all'?'active':'')+'" data-domfilter="all">Todos</span>'+
+    DOMAINS.map(d=>{
+      const n = S.words.filter(w=>w.domain===d.id).length;
+      if(!n) return '';
+      return '<span class="chip '+(S.filterDomain===d.id?'active':'')+'" data-domfilter="'+d.id+'">'+d.label+' <span class="n">'+n+'</span></span>';
+    }).join('')+
+  '</div>'+
+  '<div class="panel" style="margin-top:14px">'+
+    (list.length ? list.map(w=>{
+      const lvl = Math.max(0, w.level+1);
+      let dots='';
+      for(let i=0;i<9;i++) dots += '<span class="'+(i<lvl?'on':'')+'"></span>';
+      return '<div class="wordrow">'+
+        speakBtn(stripArticle(w.es))+
+        '<div style="flex:1; min-width:0">'+
+          '<div class="es">'+esc(w.es)+'</div>'+
+          '<div class="en">'+esc(w.en)+'</div>'+
+        '</div>'+
+        '<div class="lvl-dots">'+dots+'</div>'+
+      '</div>';
+    }).join('') : '<div class="empty">Sin palabras en este dominio todavía.</div>')+
+  '</div>';
+}
+
+/* ============================================================
+   VOCAB SESSION
+   ============================================================ */
+function startReview(){
+  const queue = shuffle(dueWords()).slice(0, 20);
+  if(!queue.length) return;
+  S.session = {
+    queue, idx:0, correct:0, total:queue.length, answered:0,
+    phase:'intro', // intro -> quiz -> feedback
+    answer:null, picked:null
+  };
+  render();
+}
+
+function currentSessionWord(){ return S.session.queue[S.session.idx]; }
+
+function renderSession(){
+  const s = S.session;
+  const w = currentSessionWord();
+  if(!w){
+    const pct = s.total? Math.round(100*s.correct/s.total):0;
+    return '<div class="panel" style="text-align:center; padding:34px 18px">'+
+      '<h2 style="font-size:30px; color:var(--copper-dark)">Sesión completa</h2>'+
+      '<div style="margin:14px 0; color:var(--stone)">'+s.correct+' de '+s.total+' correctas ('+pct+'%)</div>'+
+      '<button class="btn copper" data-action="end-session">Terminar</button>'+
+    '</div>';
+  }
+  const progress = Math.round(100*s.idx/s.total);
+  const isNew = w.level < 0;
+  let inner = '';
+
+  if(isNew && s.phase==='intro'){
+    inner = ''+
+      '<span class="tag">'+domLabel(w.domain)+' &middot; palabra nueva</span>'+
+      '<div class="prompt" style="margin-top:14px">'+esc(w.es)+'</div>'+
+      speakBtn(stripArticle(w.es))+
+      '<div class="sub" style="margin-top:6px">'+esc(w.en)+'</div>'+
+      '<div class="sub" style="font-size:13px; margin-top:2px">'+esc(w.example)+'</div>'+
+      '<button class="btn copper" data-action="intro-continue" style="margin-top:16px">Entendido</button>';
+  } else {
+    const type = isNew ? 'mcq' : cardTypeForLevel(w.level);
+    if(s.phase==='feedback'){
+      const wasCorrect = s.lastCorrect;
+      inner = ''+
+        '<span class="tag">'+domLabel(w.domain)+'</span>'+
+        '<div class="prompt" style="margin-top:14px; font-size:30px">'+esc(w.es)+'</div>'+
+        speakBtn(stripArticle(w.es))+
+        '<div class="feedback '+(wasCorrect?'good':'bad')+'">'+
+          (wasCorrect?'Correcto':'La respuesta correcta era:')+
+          (!wasCorrect?'<div class="correction">'+esc(w.en)+'</div>':'')+
+          '<div class="note">'+esc(w.example)+'</div>'+
+        '</div>'+
+        '<button class="btn copper" data-action="session-next" style="margin-top:12px">Siguiente</button>';
+    } else if(type==='mcq'){
+      const opts = mcqOptions(w);
+      inner = ''+
+        '<span class="tag">'+domLabel(w.domain)+'</span>'+
+        '<div class="prompt-label" style="margin-top:14px">¿Qué significa…?</div>'+
+        '<div class="prompt">'+esc(w.es)+'</div>'+
+        speakBtn(stripArticle(w.es))+
+        '<div class="mcq-grid">'+opts.map(o=>'<button class="mcq-opt" data-mcq="'+escAttr(o)+'">'+esc(o)+'</button>').join('')+'</div>';
+    } else if(type==='type'){
+      inner = ''+
+        '<span class="tag">'+domLabel(w.domain)+'</span>'+
+        '<div class="prompt-label" style="margin-top:14px">Escribe en español</div>'+
+        '<div class="prompt" style="font-size:26px">'+esc(w.en)+'</div>'+
+        '<input type="text" class="type-answer" id="typeAns" autocomplete="off" autocapitalize="off" placeholder="…">'+
+        '<button class="btn copper" data-action="submit-type" style="margin-top:10px">Comprobar</button>';
+    } else { // audio
+      inner = ''+
+        '<span class="tag">'+domLabel(w.domain)+' &middot; solo audio</span>'+
+        '<div class="prompt-label" style="margin-top:14px">Escucha y escribe la palabra</div>'+
+        '<button class="speak-btn" style="width:56px; height:56px; font-size:24px; margin:8px auto" data-speak="'+escAttr(stripArticle(w.es))+'" data-autoplay="1">\u{1F50A}</button>'+
+        '<input type="text" class="type-answer" id="typeAns" autocomplete="off" autocapitalize="off" placeholder="…">'+
+        '<button class="btn copper" data-action="submit-type" style="margin-top:10px">Comprobar</button>';
+    }
+  }
+
+  return ''+
+    '<div class="progressbar"><div style="width:'+progress+'%"></div></div>'+
+    '<div class="session-card" style="position:relative">'+inner+'</div>'+
+    '<button class="btn ghost" data-action="end-session" style="margin-top:14px">Salir de la sesión</button>';
+}
+
+function mcqOptions(w){
+  const pool = S.words.filter(x=>x.id!==w.id && x.en!==w.en);
+  const distractors = shuffle(pool).slice(0,3).map(x=>x.en);
+  return shuffle([w.en, ...distractors]);
+}
+
+function handleIntroContinue(){
+  S.session.phase = 'quiz';
+  render();
+}
+function handleMcqPick(opt){
+  const w = currentSessionWord();
+  const correct = opt === w.en;
+  finishAnswer(correct);
+}
+function handleTypeSubmit(){
+  const w = currentSessionWord();
+  const input = byId('typeAns');
+  if(!input) return;
+  const correct = normalize(input.value) === normalize(stripArticle(w.es));
+  finishAnswer(correct);
+}
+function finishAnswer(correct){
+  const s = S.session;
+  const w = currentSessionWord();
+  s.lastCorrect = correct;
+  s.answered++;
+  if(correct) s.correct++;
+  const newLevel = correct ? Math.min(8, w.level+1) : Math.max(0, w.level-2);
+  w.level = newLevel;
+  w.nextReview = nextReviewFor(newLevel);
+  persistWord(w);
+  s.phase = 'feedback';
+  render();
+}
+function sessionNext(){
+  const s = S.session;
+  s.idx++;
+  s.phase = 'intro';
+  render();
+}
+function endSession(){
+  const answered = S.session ? S.session.answered : 0;
+  S.session = null;
+  S.view = 'home';
+  finalizeSession(answered).then(()=>loadAll()).then(render);
+}
+async function persistWord(w){
+  try{
+    await profileRef().collection('words').doc(w.id).update({level:w.level, nextReview:w.nextReview});
+  }catch(e){ /* best effort */ }
+}
+
+/* ============================================================
+   GOALS, STREAK & MILESTONES
+   ============================================================ */
+function computeMasteryMilestones(){
+  const seen = S.profile.milestonesSeen || [];
+  const found = [];
+  const masteredWords = S.words.filter(w=>w.level>=MASTER_LEVEL).length;
+  [10,25,50,75].forEach(n=>{
+    const key = 'words_'+n;
+    if(masteredWords>=n && !seen.includes(key)) found.push({key, label:n+' palabras dominadas'});
+  });
+  if(S.words.length>0 && masteredWords>=S.words.length){
+    const key='words_all';
+    if(!seen.includes(key)) found.push({key, label:'Todo el vocabulario dominado'});
+  }
+  Object.keys(S.verbs).forEach(inf=>{
+    const cards = S.verbCards.filter(c=>c.infinitive===inf);
+    if(cards.length>=TENSE_KEYS.length && cards.every(c=>c.level>=MASTER_LEVEL)){
+      const key = 'verb_'+inf;
+      if(!seen.includes(key)) found.push({key, label:'Verbo dominado: '+inf});
+    }
+  });
+  DOMAINS.forEach(d=>{
+    const inDom = S.words.filter(w=>w.domain===d.id);
+    if(!inDom.length) return;
+    const masteredInDom = inDom.filter(w=>w.level>=MASTER_LEVEL).length;
+    if(masteredInDom/inDom.length >= 0.8){
+      const key = 'domain_'+d.id;
+      if(!seen.includes(key)) found.push({key, label:domLabel(d.id)+': dominado'});
+    }
+  });
+  return found;
+}
+
+async function finalizeSession(sessionCount){
+  if(!sessionCount) return;
+  const p = S.profile || {};
+  const t = todayStr();
+  let todayDate = p.todayDate, todayCount = p.todayCount||0;
+  let streak = p.streak||0, lastCompletedDate = p.lastCompletedDate||null;
+  const goal = p.dailyGoal || 20;
+  if(todayDate !== t){ todayDate = t; todayCount = 0; }
+  const metBefore = todayCount >= goal;
+  todayCount += sessionCount;
+  const metNow = todayCount >= goal;
+
+  const seen = (p.milestonesSeen||[]).slice();
+  const newCelebrations = [];
+
+  if(metNow && !metBefore){
+    if(lastCompletedDate && daysBetween(lastCompletedDate, t)===1){ streak += 1; }
+    else if(!lastCompletedDate || daysBetween(lastCompletedDate, t)!==0){ streak = 1; }
+    lastCompletedDate = t;
+    [3,7,14,30,60,100].forEach(n=>{
+      const key = 'streak_'+n;
+      if(streak>=n && !seen.includes(key)){ seen.push(key); newCelebrations.push({key, label:n+' días seguidos'}); }
+    });
+    newCelebrations.push({key:'daily_'+t, label:'Meta del día cumplida'});
+  }
+
+  computeMasteryMilestones().forEach(m=>{ seen.push(m.key); newCelebrations.push(m); });
+
+  const pendingCelebrations = (p.pendingCelebrations||[]).concat(newCelebrations);
+  const patch = {todayDate, todayCount, streak, lastCompletedDate, milestonesSeen:seen, pendingCelebrations};
+  Object.assign(S.profile, patch);
+  try{ await profileRef().update(patch); }catch(e){ /* best effort */ }
+}
+
+async function dismissCelebrations(){
+  S.profile.pendingCelebrations = [];
+  try{ await profileRef().update({pendingCelebrations:[]}); }catch(e){ /* best effort */ }
+  render();
+}
+
+/* ============================================================
+   VERBS TAB
+   ============================================================ */
+function renderVerbs(){
+  const dueV = dueVerbCards().length;
+  const infs = Object.keys(S.verbs).sort();
+  return ''+
+  '<button class="btn copper" data-action="start-verbdrill" '+(dueV===0?'disabled':'')+' style="margin-bottom:16px">'+(dueV>0?'Practicar conjugación ('+dueV+')':'Verbos al día')+'</button>'+
+  '<div class="panel">'+
+    (infs.length ? infs.map(inf=>{
+      const v = S.verbs[inf];
+      return '<div class="wordrow" data-openverb="'+esc(inf)+'" style="cursor:pointer">'+
+        speakBtn(inf)+
+        '<div style="flex:1"><div class="es">'+esc(inf)+'</div><div class="en">'+esc(v.en)+'</div></div>'+
+        '<span style="color:var(--stone)">›</span>'+
+      '</div>';
+    }).join('') : '<div class="empty">No hay verbos todavía.</div>')+
+  '</div>';
+}
+
+function renderVerbDetail(inf){
+  const v = S.verbs[inf];
+  if(!v) return '<div class="empty">No encontrado.</div>';
+  let html = '<button class="btn ghost" data-action="close-verb" style="padding-left:0">&larr; Volver</button>'+
+    '<h2 style="font-size:34px; color:var(--copper-dark)">'+esc(inf)+'</h2>'+
+    '<div style="color:var(--stone); margin-bottom:6px">'+esc(v.en)+'</div>';
+  TENSE_KEYS.forEach(t=>{
+    const forms = v.c[t];
+    html += '<div class="tensegroup"><h4>'+TENSE_LABELS[t]+'</h4>'+
+      '<table class="vtable"><tbody>'+
+      PERSONS.map((p,i)=>'<tr><td class="mono" style="color:var(--stone)">'+p+'</td><td>'+esc(forms[i])+'</td></tr>').join('')+
+      '</tbody></table></div>';
+  });
+  html += '<div class="tensegroup"><h4>Mandato (usted / ustedes)</h4>'+
+    '<table class="vtable"><tbody>'+
+    '<tr><td class="mono" style="color:var(--stone)">usted</td><td>'+esc(v.c.mandato.usted)+'</td></tr>'+
+    '<tr><td class="mono" style="color:var(--stone)">ustedes</td><td>'+esc(v.c.mandato.ustedes)+'</td></tr>'+
+    '</tbody></table></div>';
+  return html;
+}
+
+/* ============================================================
+   VERB DRILL SESSION
+   ============================================================ */
+function startVerbDrill(){
+  const queue = shuffle(dueVerbCards()).slice(0,15);
+  if(!queue.length) return;
+  S.verbSession = {queue, idx:0, correct:0, total:queue.length, answered:0, phase:'quiz', personIdx: Math.floor(Math.random()*5)};
+  render();
+}
+function currentVerbCard(){ return S.verbSession.queue[S.verbSession.idx]; }
+
+function renderVerbSession(){
+  const vs = S.verbSession;
+  const card = currentVerbCard();
+  if(!card){
+    const pct = vs.total? Math.round(100*vs.correct/vs.total):0;
+    return '<div class="panel" style="text-align:center; padding:34px 18px">'+
+      '<h2 style="font-size:30px; color:var(--copper-dark)">Sesión completa</h2>'+
+      '<div style="margin:14px 0; color:var(--stone)">'+vs.correct+' de '+vs.total+' correctas ('+pct+'%)</div>'+
+      '<button class="btn copper" data-action="end-verbsession">Terminar</button>'+
+    '</div>';
+  }
+  const v = S.verbs[card.infinitive];
+  if(!v){ vs.idx++; return renderVerbSession(); }
+  const pIdx = vs.personIdx;
+  const progress = Math.round(100*vs.idx/vs.total);
+  let inner = '';
+  if(vs.phase==='feedback'){
+    const correctForm = v.c[card.tense][pIdx];
+    inner = ''+
+      '<span class="tag">'+TENSE_LABELS[card.tense]+' &middot; '+PERSONS[pIdx]+'</span>'+
+      '<div class="prompt" style="margin-top:14px; font-size:30px">'+esc(card.infinitive)+'</div>'+
+      '<div class="feedback '+(vs.lastCorrect?'good':'bad')+'">'+
+        (vs.lastCorrect?'Correcto: ':'La forma correcta es: ')+
+        '<span class="correction" style="display:inline">'+esc(correctForm)+'</span>'+
+      '</div>'+
+      '<button class="btn copper" data-action="verbsession-next" style="margin-top:12px">Siguiente</button>';
+  } else {
+    inner = ''+
+      '<span class="tag">'+TENSE_LABELS[card.tense]+'</span>'+
+      '<div class="prompt-label" style="margin-top:14px">Conjuga</div>'+
+      '<div class="prompt">'+esc(card.infinitive)+'</div>'+
+      speakBtn(card.infinitive)+
+      '<div class="sub">'+PERSONS[pIdx]+' &middot; '+esc(v.en)+'</div>'+
+      '<input type="text" class="type-answer" id="verbAns" autocomplete="off" autocapitalize="off" placeholder="…">'+
+      '<button class="btn copper" data-action="submit-verb" style="margin-top:10px">Comprobar</button>';
+  }
+  return ''+
+    '<div class="progressbar"><div style="width:'+progress+'%"></div></div>'+
+    '<div class="session-card">'+inner+'</div>'+
+    '<button class="btn ghost" data-action="end-verbsession" style="margin-top:14px">Salir de la sesión</button>';
+}
+
+function submitVerbAnswer(){
+  const vs = S.verbSession;
+  const card = currentVerbCard();
+  const v = S.verbs[card.infinitive];
+  const input = byId('verbAns');
+  if(!input) return;
+  const correctForm = v.c[card.tense][vs.personIdx];
+  const correct = normalize(input.value) === normalize(correctForm);
+  vs.lastCorrect = correct;
+  vs.answered++;
+  if(correct) vs.correct++;
+  const newLevel = correct ? Math.min(8, card.level+1) : Math.max(0, card.level-2);
+  card.level = newLevel;
+  card.nextReview = nextReviewFor(newLevel);
+  persistVerbCard(card);
+  vs.phase = 'feedback';
+  render();
+}
+function verbSessionNext(){
+  const vs = S.verbSession;
+  vs.idx++;
+  vs.personIdx = Math.floor(Math.random()*5);
+  vs.phase = 'quiz';
+  render();
+}
+function endVerbSession(){
+  const answered = S.verbSession ? S.verbSession.answered : 0;
+  S.verbSession = null;
+  S.view = 'home';
+  finalizeSession(answered).then(()=>loadAll()).then(render);
+}
+async function persistVerbCard(card){
+  try{
+    if(card.id){
+      await profileRef().collection('verbCards').doc(card.id).update({level:card.level, nextReview:card.nextReview});
+    } else {
+      const ref = await profileRef().collection('verbCards').add({infinitive:card.infinitive, tense:card.tense, level:card.level, nextReview:card.nextReview});
+      card.id = ref.id;
+    }
+  }catch(e){ /* best effort */ }
+}
+
+/* ============================================================
+   PIMSLEUR MODE — audio-only, hands-free, graduated recall
+   Cue in English (spoken) -> silent countdown to answer out loud ->
+   Spanish answer spoken + shown -> self-grade. Each word resurfaces
+   a few times within the session at growing gaps (classic Pimsleur
+   graduated-interval recall). Does not touch the long-term SRS level
+   of the word — this is supplementary spoken practice, layered on
+   top of it, and still counts toward the daily goal.
+   ============================================================ */
+let pimsleurTick = null;
+function buildPimsleurQueue(words){
+  const events = [];
+  words.forEach((w,i)=>{ events.push({w, slot:i*3}); });
+  words.forEach((w,i)=>{ events.push({w, slot:i*3+4}); events.push({w, slot:i*3+9}); });
+  events.sort((a,b)=>a.slot-b.slot);
+  return events.map(e=>e.w);
+}
+function currentPimWord(){ return S.pimsleurSession.queue[S.pimsleurSession.slot]; }
+
+function startPimsleur(){
+  const due = shuffle(dueWords());
+  const rest = shuffle(S.words.filter(w=>!due.includes(w)));
+  const picks = due.concat(rest).slice(0,8);
+  if(!picks.length){ toast('Agrega algunas palabras primero.'); return; }
+  const queue = buildPimsleurQueue(picks);
+  S.pimsleurSession = {queue, slot:0, phase:'cue', countdown:4, correct:0, answered:0, total:queue.length};
+  pimsleurEnterCue();
+}
+function pimsleurEnterCue(){
+  const ps = S.pimsleurSession;
+  if(!ps) return;
+  ps.phase = 'cue';
+  render();
+  const w = currentPimWord();
+  speakLang(w.en, 'en-US');
+  setTimeout(()=>{
+    if(!S.pimsleurSession) return;
+    S.pimsleurSession.phase = 'countdown';
+    S.pimsleurSession.countdown = 4;
+    render();
+    startPimsleurCountdown();
+  }, 1600);
+}
+function startPimsleurCountdown(){
+  clearInterval(pimsleurTick);
+  pimsleurTick = setInterval(()=>{
+    if(!S.pimsleurSession){ clearInterval(pimsleurTick); return; }
+    S.pimsleurSession.countdown--;
+    if(S.pimsleurSession.countdown<=0){
+      pimsleurReveal();
+      return;
+    }
+    render();
+  }, 1000);
+}
+function pimsleurReveal(){
+  clearInterval(pimsleurTick);
+  const ps = S.pimsleurSession;
+  if(!ps) return;
+  ps.phase = 'reveal';
+  render();
+  const w = currentPimWord();
+  speak(stripArticle(w.es));
+}
+function pimsleurGrade(correct){
+  const ps = S.pimsleurSession;
+  if(!ps) return;
+  ps.answered++;
+  if(correct) ps.correct++;
+  ps.slot++;
+  if(ps.slot>=ps.total){ ps.phase='done'; render(); }
+  else { pimsleurEnterCue(); }
+}
+function renderPimsleurSession(){
+  const ps = S.pimsleurSession;
+  if(ps.phase==='done'){
+    const pct = ps.answered? Math.round(100*ps.correct/ps.answered):0;
+    return '<div class="panel" style="text-align:center; padding:34px 18px">'+
+      '<h2 style="font-size:30px; color:var(--copper-dark)">Práctica completa</h2>'+
+      '<div style="margin:14px 0; color:var(--stone)">'+ps.correct+' de '+ps.answered+' bien dichas ('+pct+'%)</div>'+
+      '<button class="btn copper" data-action="end-pimsleur">Terminar</button>'+
+    '</div>';
+  }
+  const w = currentPimWord();
+  const progress = Math.round(100*ps.slot/ps.total);
+  let inner;
+  if(ps.phase==='cue'){
+    inner = ''+
+      '<span class="tag">modo Pimsleur &middot; escucha</span>'+
+      '<div class="prompt-label" style="margin-top:14px">En español es…</div>'+
+      '<div class="prompt" style="font-size:26px">'+esc(w.en)+'</div>'+
+      '<div class="sub">Piensa la respuesta.</div>';
+  } else if(ps.phase==='countdown'){
+    inner = ''+
+      '<span class="tag">modo Pimsleur &middot; dilo en voz alta</span>'+
+      '<div class="prompt" style="font-size:56px; margin-top:14px">'+ps.countdown+'</div>'+
+      '<button class="btn secondary" data-action="pimsleur-reveal-now" style="margin-top:14px">Ya lo dije</button>';
+  } else { // reveal
+    inner = ''+
+      '<span class="tag">modo Pimsleur &middot; respuesta</span>'+
+      '<div class="prompt" style="margin-top:14px">'+esc(w.es)+'</div>'+
+      speakBtn(stripArticle(w.es))+
+      '<div class="row" style="margin-top:16px">'+
+        '<button class="btn secondary" data-action="pimsleur-bad">Me equivoqué</button>'+
+        '<button class="btn copper" data-action="pimsleur-good">Lo dije bien</button>'+
+      '</div>';
+  }
+  return ''+
+    '<div class="progressbar"><div style="width:'+progress+'%"></div></div>'+
+    '<div class="session-card">'+inner+'</div>'+
+    '<button class="btn ghost" data-action="end-pimsleur" style="margin-top:14px">Salir</button>';
+}
+function endPimsleurSession(){
+  clearInterval(pimsleurTick);
+  const answered = S.pimsleurSession ? S.pimsleurSession.answered : 0;
+  S.pimsleurSession = null;
+  S.view = 'home';
+  finalizeSession(answered).then(()=>loadAll()).then(render);
+}
+
+/* ============================================================
+   GRAMMAR TAB — lesson picker + choice/type drills
+   ============================================================ */
+const gState = { lessonId:null, setIdx:0, blankIdx:0, revealed:false, picked:null, score:0, generating:false };
+
+function lessonSets(lessonId){
+  const lesson = LESSONS[lessonId];
+  const extra = S.grammarSets.filter(g=>g.lessonId===lessonId).map(g=>g.data);
+  return lesson.sets.concat(extra);
+}
+
+function renderGrammar(){
+  if(!gState.lessonId) return renderLessonPicker();
+  const lesson = LESSONS[gState.lessonId];
+  const sets = lessonSets(gState.lessonId);
+  const set = sets[gState.setIdx] || sets[0];
+  const backBtn = '<button class="btn ghost" data-action="grammar-back" style="padding-left:0; margin-bottom:6px">&larr; Lecciones</button>';
+  if(!set){
+    return backBtn+'<div class="empty">No hay ejercicios todavía.</div>';
+  }
+  const blank = set.blanks[gState.blankIdx];
+  const done = gState.blankIdx >= set.blanks.length;
+
+  let inner;
+  if(done){
+    inner = '<div class="panel" style="text-align:center; padding:28px 18px">'+
+      '<h3 style="font-size:24px; color:var(--copper-dark)">Set completo</h3>'+
+      '<div style="color:var(--stone); margin:10px 0">'+gState.score+' de '+set.blanks.length+' correctas</div>'+
+      '<div class="row">'+
+        (gState.setIdx < sets.length-1 ? '<button class="btn copper" data-action="next-story">Siguiente</button>' : '<button class="btn secondary" data-action="restart-story">Repetir</button>')+
+      '</div>'+
+    '</div>';
+  } else if(lesson.mode==='choice'){
+    inner = ''+
+      '<div class="panel">'+
+      '<div style="font-size:12px; color:var(--stone); margin-bottom:8px">'+(gState.blankIdx+1)+' / '+set.blanks.length+'</div>'+
+      '<div style="font-size:17px; line-height:1.7">'+esc(blank.before)+
+        (gState.revealed
+          ? '<strong style="color:'+(gState.picked===blank.ans?'var(--good)':'var(--bad)')+'">'+esc(blank.ans)+'</strong>'
+          : '<span class="mono" style="color:var(--copper-dark)">____</span>')+
+        esc(blank.after)+
+      '</div>';
+    if(!gState.revealed){
+      inner += '<div class="row" style="margin-top:16px">'+
+        '<button class="btn secondary" data-gpick="'+escAttr(blank.ans)+'">'+lesson.labels[0]+'<br><span class="mono" style="font-size:12px">'+esc(blank.ans)+'</span></button>'+
+        '<button class="btn secondary" data-gpick="'+escAttr(blank.wrongAns)+'">'+lesson.labels[1]+'<br><span class="mono" style="font-size:12px">'+esc(blank.wrongAns)+'</span></button>'+
+      '</div>';
+    } else {
+      inner += '<div class="feedback '+(gState.lastCorrect?'good':'bad')+'" style="margin-top:14px">'+
+        (gState.lastCorrect?'Correcto.':'No — la respuesta correcta es "'+esc(blank.ans)+'".')+
+        '<div class="note">'+esc(blank.why)+'</div>'+
+      '</div>'+
+      '<button class="btn copper" data-action="grammar-next" style="margin-top:12px">Siguiente</button>';
+    }
+    inner += '</div>';
+  } else { // type mode
+    inner = ''+
+      '<div class="panel">'+
+      '<div style="font-size:12px; color:var(--stone); margin-bottom:8px">'+(gState.blankIdx+1)+' / '+set.blanks.length+'</div>'+
+      '<div style="font-size:17px; line-height:1.7">'+esc(blank.before)+
+        (gState.revealed
+          ? '<strong style="color:'+(gState.lastCorrect?'var(--good)':'var(--bad)')+'">'+esc(blank.ans)+'</strong>'
+          : '<span class="mono" style="color:var(--copper-dark)">___('+esc(blank.hint)+')___</span>')+
+        esc(blank.after)+
+      '</div>';
+    if(!gState.revealed){
+      inner += '<input type="text" class="type-answer" id="gramAns" autocomplete="off" autocapitalize="off" placeholder="…" style="margin-top:14px">'+
+        '<button class="btn copper" data-action="submit-gram" style="margin-top:10px">Comprobar</button>';
+    } else {
+      inner += '<div class="feedback '+(gState.lastCorrect?'good':'bad')+'" style="margin-top:14px">'+
+        (gState.lastCorrect?'Correcto.':'No — la respuesta correcta es "'+esc(blank.ans)+'".')+
+        '<div class="note">'+esc(blank.why)+'</div>'+
+      '</div>'+
+      '<button class="btn copper" data-action="grammar-next" style="margin-top:12px">Siguiente</button>';
+    }
+    inner += '</div>';
+  }
+
+  return ''+
+    backBtn+
+    '<h2 style="font-size:26px; color:var(--copper-dark); margin-bottom:4px">'+esc(lesson.title)+'</h2>'+
+    '<div style="color:var(--stone); font-size:14px; margin-bottom:14px">'+esc(set.title)+'</div>'+
+    inner+
+    '<button class="btn secondary" data-action="generate-story" style="margin-top:18px" '+(gState.generating?'disabled':'')+'>'+
+      (gState.generating?'Generando…':'Generar más ejercicios con Claude')+
+    '</button>';
+}
+
+function renderLessonPicker(){
+  return ''+
+    '<h2 style="font-size:26px; color:var(--copper-dark); margin-bottom:12px">Gramática</h2>'+
+    LESSON_ORDER.map(id=>{
+      const lesson = LESSONS[id];
+      return '<div class="panel" data-openlesson="'+id+'" style="cursor:pointer">'+
+        '<h3 style="font-size:19px; margin-bottom:5px">'+esc(lesson.title)+'</h3>'+
+        '<div style="color:var(--stone); font-size:13px; line-height:1.5">'+esc(lesson.blurb)+'</div>'+
+      '</div>';
+    }).join('');
+}
+
+function openLesson(id){
+  gState.lessonId = id;
+  gState.setIdx = 0;
+  gState.blankIdx = 0;
+  gState.revealed = false;
+  gState.score = 0;
+  render();
+}
+function gramBack(){
+  gState.lessonId = null;
+  render();
+}
+function gramPick(val){
+  const set = lessonSets(gState.lessonId)[gState.setIdx];
+  const blank = set.blanks[gState.blankIdx];
+  gState.revealed = true;
+  gState.picked = val;
+  gState.lastCorrect = (val === blank.ans);
+  if(gState.lastCorrect) gState.score++;
+  render();
+}
+function submitGramAnswer(){
+  const set = lessonSets(gState.lessonId)[gState.setIdx];
+  const blank = set.blanks[gState.blankIdx];
+  const input = byId('gramAns');
+  if(!input) return;
+  const correct = normalize(input.value) === normalize(blank.ans);
+  gState.revealed = true;
+  gState.lastCorrect = correct;
+  if(correct) gState.score++;
+  render();
+}
+function gramNext(){
+  gState.blankIdx++;
+  gState.revealed = false;
+  gState.picked = null;
+  render();
+}
+function gramNextStory(){
+  gState.setIdx++;
+  gState.blankIdx = 0;
+  gState.revealed = false;
+  gState.score = 0;
+  render();
+}
+function gramRestart(){
+  gState.blankIdx = 0;
+  gState.revealed = false;
+  gState.score = 0;
+  render();
+}
+async function generateStory(){
+  if(!hasApiKey()){ toast('Agrega tu clave de API en la pestaña Agregar.'); return; }
+  const lesson = LESSONS[gState.lessonId];
+  gState.generating = true;
+  render();
+  try{
+    let prompt;
+    if(lesson.mode==='choice'){
+      prompt = 'Write 5 to 7 short professional sentences in Mexican Spanish for a fine-art fabrication studio '+
+        '(welding, stone carving, casting, installation, shipping, contracts, or client conversation — mix a few), '+
+        'each with ONE blank testing "'+lesson.labels[0]+'" vs "'+lesson.labels[1]+'". '+
+        'Reply with ONLY JSON, no markdown fences, in exactly this shape:\n'+
+        '{"title":"short title in Spanish","blanks":[{"before":"text before the blank","ans":"the correct form for this blank","wrongAns":"the other ('+lesson.labels[0]+'/'+lesson.labels[1]+') form of the same word, incorrect here","after":"rest of sentence including final punctuation","why":"one sentence in English explaining why this is correct here"}]}\n'+
+        'Use "usted/ustedes" register, not "tú" or "vosotros".';
+    } else {
+      prompt = 'Write 5 to 7 short professional sentences in Mexican Spanish for a fine-art fabrication studio '+
+        '(welding, stone carving, casting, installation, shipping, contracts, or client conversation — mix a few), '+
+        'each with ONE blank practicing this grammar point: "'+lesson.title+'" — '+lesson.blurb+' '+
+        'Reply with ONLY JSON, no markdown fences, in exactly this shape:\n'+
+        '{"title":"short title in Spanish","blanks":[{"before":"text before the blank","hint":"short hint shown to the learner, e.g. an infinitive or infinitive + person","ans":"the correct form that fills the blank","after":"rest of sentence including final punctuation","why":"one sentence in English explaining why this is correct here"}]}\n'+
+        'Use "usted/ustedes" register, not "tú" or "vosotros".';
+    }
+    const data = await callClaude(prompt);
+    if(data && data.blanks && data.blanks.length){
+      const col = profileRef().collection('grammarSets');
+      const ref = await col.add({lessonId:gState.lessonId, data, createdAt:now()});
+      S.grammarSets.push({id:ref.id, lessonId:gState.lessonId, data, createdAt:now()});
+      gState.setIdx = lessonSets(gState.lessonId).length-1;
+      gState.blankIdx = 0;
+      gState.revealed = false;
+      gState.score = 0;
+    } else {
+      toast('No se pudo generar. Intenta de nuevo.');
+    }
+  }catch(e){
+    toast('No se pudo generar.');
+  }
+  gState.generating = false;
+  render();
+}
+
+/* ============================================================
+   ADD TAB
+   ============================================================ */
+const addState = { mode:'word', wordDraft:null, verbDraft:null, busy:false, err:null };
+
+function renderApiKeyPanel(){
+  const has = hasApiKey();
+  return '<div class="panel" style="margin-bottom:16px">'+
+    '<h3 style="font-size:15px; margin-bottom:4px">Clave de API de Anthropic</h3>'+
+    '<div style="color:var(--stone); font-size:12px; margin-bottom:10px">'+
+      'Opcional — solo se usa para los botones "Completar con Claude". Se guarda únicamente en este navegador. '+
+      (has?'Clave guardada.':'Consigue una en console.anthropic.com.')+
+    '</div>'+
+    '<input type="text" id="apiKeyInput" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" value="">'+
+    '<button class="btn secondary" data-action="save-apikey" style="margin-top:10px">'+(has?'Actualizar clave':'Guardar clave')+'</button>'+
+  '</div>';
+}
+function renderAdd(){
+  return ''+
+  renderApiKeyPanel()+
+  '<div class="row" style="margin-bottom:16px">'+
+    '<button class="btn '+(addState.mode==='word'?'copper':'secondary')+'" data-addmode="word">Palabra</button>'+
+    '<button class="btn '+(addState.mode==='verb'?'copper':'secondary')+'" data-addmode="verb">Verbo</button>'+
+  '</div>'+
+  (addState.mode==='word' ? renderAddWord() : renderAddVerb());
+}
+
+function renderAddWord(){
+  const d = addState.wordDraft;
+  let html = '<div class="panel">'+
+    '<label>Palabra en español</label>'+
+    '<input type="text" id="newWordEs" placeholder="ej. la abrazadera" value="'+(d?escAttr(d.es):'')+'">'+
+    '<button class="btn secondary" data-action="fill-word" style="margin-top:12px" '+(addState.busy?'disabled':'')+'>'+(addState.busy?'Consultando a Claude…':'Completar con Claude')+'</button>';
+  if(addState.err) html += '<div class="feedback bad" style="margin-top:10px">'+esc(addState.err)+'</div>';
+  if(d){
+    html += '<hr>'+
+      '<label>Significado en inglés</label><input type="text" id="dEn" value="'+escAttr(d.en)+'">'+
+      '<label>Dominio</label><select id="dDom">'+DOMAINS.map(dm=>'<option value="'+dm.id+'" '+(dm.id===d.domain?'selected':'')+'>'+dm.label+'</option>').join('')+'</select>'+
+      '<label>Frase de ejemplo</label><input type="text" id="dEx" value="'+escAttr(d.example)+'">'+
+      '<button class="btn copper" data-action="save-word" style="margin-top:14px">Guardar palabra</button>';
+  }
+  html += '</div>';
+  return html;
+}
+function renderAddVerb(){
+  const d = addState.verbDraft;
+  let html = '<div class="panel">'+
+    '<label>Verbo en infinitivo</label>'+
+    '<input type="text" id="newVerbInf" placeholder="ej. atornillar" value="'+(d?escAttr(d.infinitive):'')+'">'+
+    '<button class="btn secondary" data-action="fill-verb" style="margin-top:12px" '+(addState.busy?'disabled':'')+'>'+(addState.busy?'Consultando a Claude…':'Generar conjugación con Claude')+'</button>';
+  if(addState.err) html += '<div class="feedback bad" style="margin-top:10px">'+esc(addState.err)+'</div>';
+  if(d){
+    html += '<hr><div style="color:var(--stone); margin-bottom:8px">'+esc(d.en)+'</div>';
+    TENSE_KEYS.forEach(t=>{
+      html += '<div class="tensegroup"><h4>'+TENSE_LABELS[t]+'</h4><table class="vtable"><tbody>'+
+        PERSONS.map((p,i)=>'<tr><td class="mono" style="color:var(--stone)">'+p+'</td><td>'+esc(d.c[t][i])+'</td></tr>').join('')+
+        '</tbody></table></div>';
+    });
+    html += '<button class="btn copper" data-action="save-verb" style="margin-top:16px">Guardar verbo</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+async function fillWord(){
+  const es = (byId('newWordEs')||{}).value || '';
+  if(!es.trim()) return;
+  if(!hasApiKey()){ addState.err='Agrega tu clave de API de Anthropic abajo primero.'; render(); return; }
+  addState.busy = true; addState.err=null; render();
+  try{
+    const domainList = DOMAINS.map(d=>d.id).join(', ');
+    const prompt = 'A Mexican-Spanish learner is adding the word or phrase "'+es+'" to their vocabulary app for professional use in an art fabrication studio (welding, stone, casting, installation, shipping, contracts). '+
+      'Reply with ONLY JSON, no markdown: {"es":"the term written with its article if it is a noun, in Mexican Spanish","en":"English meaning","domain":"one of: '+domainList+'","example":"one natural Mexican-Spanish example sentence using the term"}';
+    const data = await callClaude(prompt);
+    if(data && data.es){
+      addState.wordDraft = {es:data.es, en:data.en||'', domain:DOMAINS.some(d=>d.id===data.domain)?data.domain:'general', example:data.example||''};
+    } else {
+      addState.err = 'No se pudo generar. Intenta de nuevo.';
+    }
+  }catch(e){ addState.err = 'No se pudo generar. Intenta de nuevo.'; }
+  addState.busy = false; render();
+}
+async function saveWord(){
+  const d = addState.wordDraft;
+  d.en = (byId('dEn')||{}).value || d.en;
+  d.domain = (byId('dDom')||{}).value || d.domain;
+  d.example = (byId('dEx')||{}).value || d.example;
+  const id = uid8();
+  await profileRef().collection('words').doc(id).set({
+    es:d.es, en:d.en, gender:'', pos:'n', domain:d.domain, example:d.example,
+    level:-1, nextReview: now(), createdAt: now()
+  });
+  addState.wordDraft = null;
+  byId('newWordEs') && (byId('newWordEs').value='');
+  await loadAll();
+  S.view = 'vocab';
+  toast('Palabra guardada.');
+  render();
+}
+async function fillVerb(){
+  const inf = (byId('newVerbInf')||{}).value || '';
+  if(!inf.trim()) return;
+  if(!hasApiKey()){ addState.err='Agrega tu clave de API de Anthropic abajo primero.'; render(); return; }
+  addState.busy = true; addState.err = null; render();
+  try{
+    const prompt = 'Give the full Mexican-Spanish conjugation of the verb "'+inf.trim()+'" (no vosotros form). '+
+      'Reply with ONLY JSON, no markdown fences, in exactly this shape (5 forms per tense, in this person order: yo, tú, usted, nosotros, ustedes):\n'+
+      '{"infinitive":"'+inf.trim()+'","en":"English meaning",'+
+      '"c":{"presente":[...5],"preterito":[...5],"imperfecto":[...5],"futuro":[...5],"condicional":[...5],"subjPresente":[...5],"subjImperfecto":[...5],"mandato":{"usted":"...","ustedes":"..."}}}';
+    const data = await callClaude(prompt);
+    if(data && data.c && data.c.presente){
+      addState.verbDraft = data;
+    } else {
+      addState.err = 'No se pudo generar. Intenta de nuevo.';
+    }
+  }catch(e){ addState.err = 'No se pudo generar. Intenta de nuevo.'; }
+  addState.busy = false; render();
+}
+async function saveVerb(){
+  const d = addState.verbDraft;
+  const inf = d.infinitive.trim().toLowerCase();
+  await profileRef().collection('verbs').doc(inf).set({infinitive:inf, en:d.en, c:d.c, source:'claude', createdAt: now()});
+  addState.verbDraft = null;
+  byId('newVerbInf') && (byId('newVerbInf').value='');
+  await loadAll();
+  S.view = 'verbs';
+  toast('Verbo guardado.');
+  render();
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer=null;
+function toast(msg){
+  S.toast = msg;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ S.toast=null; }, 2600);
+}
+
+/* ============================================================
+   EVENT WIRING
+   ============================================================ */
+let openVerbInf = null;
+function attachHandlers(){
+  document.querySelectorAll('[data-nav]').forEach(el=>{
+    el.onclick = ()=>{ S.view = el.getAttribute('data-nav'); openVerbInf=null; render(); };
+  });
+  document.querySelectorAll('[data-speak]').forEach(el=>{
+    el.onclick = ()=> speak(el.getAttribute('data-speak'));
+    if(el.getAttribute('data-autoplay')){ setTimeout(()=>speak(el.getAttribute('data-speak')), 300); }
+  });
+  const startBtn = document.querySelector('[data-action="start-review"]');
+  if(startBtn) startBtn.onclick = startReview;
+  const endBtn = document.querySelector('[data-action="end-session"]');
+  if(endBtn) endBtn.onclick = endSession;
+  const introBtn = document.querySelector('[data-action="intro-continue"]');
+  if(introBtn) introBtn.onclick = handleIntroContinue;
+  document.querySelectorAll('[data-mcq]').forEach(el=>{
+    el.onclick = ()=> handleMcqPick(el.getAttribute('data-mcq'));
+  });
+  const submitType = document.querySelector('[data-action="submit-type"]');
+  if(submitType) submitType.onclick = handleTypeSubmit;
+  const sessNext = document.querySelector('[data-action="session-next"]');
+  if(sessNext) sessNext.onclick = sessionNext;
+
+  const startVerbBtn = document.querySelector('[data-action="start-verbdrill"]');
+  if(startVerbBtn) startVerbBtn.onclick = startVerbDrill;
+  const endVerbBtn = document.querySelector('[data-action="end-verbsession"]');
+  if(endVerbBtn) endVerbBtn.onclick = endVerbSession;
+  const submitVerbBtn = document.querySelector('[data-action="submit-verb"]');
+  if(submitVerbBtn) submitVerbBtn.onclick = submitVerbAnswer;
+  const verbNext = document.querySelector('[data-action="verbsession-next"]');
+  if(verbNext) verbNext.onclick = verbSessionNext;
+
+  const startPimBtn = document.querySelector('[data-action="start-pimsleur"]');
+  if(startPimBtn) startPimBtn.onclick = startPimsleur;
+  const endPimBtn = document.querySelector('[data-action="end-pimsleur"]');
+  if(endPimBtn) endPimBtn.onclick = endPimsleurSession;
+  const pimRevealBtn = document.querySelector('[data-action="pimsleur-reveal-now"]');
+  if(pimRevealBtn) pimRevealBtn.onclick = pimsleurReveal;
+  const pimGoodBtn = document.querySelector('[data-action="pimsleur-good"]');
+  if(pimGoodBtn) pimGoodBtn.onclick = ()=>pimsleurGrade(true);
+  const pimBadBtn = document.querySelector('[data-action="pimsleur-bad"]');
+  if(pimBadBtn) pimBadBtn.onclick = ()=>pimsleurGrade(false);
+  const dismissBtn = document.querySelector('[data-action="dismiss-celebration"]');
+  if(dismissBtn) dismissBtn.onclick = dismissCelebrations;
+
+  document.querySelectorAll('[data-domfilter]').forEach(el=>{
+    el.onclick = ()=>{ S.filterDomain = el.getAttribute('data-domfilter'); render(); };
+  });
+  document.querySelectorAll('[data-openverb]').forEach(el=>{
+    el.onclick = ()=>{ openVerbInf = el.getAttribute('data-openverb'); renderVerbOverlay(); };
+  });
+
+  document.querySelectorAll('[data-openlesson]').forEach(el=>{
+    el.onclick = ()=> openLesson(el.getAttribute('data-openlesson'));
+  });
+  const gBack = document.querySelector('[data-action="grammar-back"]');
+  if(gBack) gBack.onclick = gramBack;
+  document.querySelectorAll('[data-gpick]').forEach(el=>{
+    el.onclick = ()=> gramPick(el.getAttribute('data-gpick'));
+  });
+  const gSubmit = document.querySelector('[data-action="submit-gram"]');
+  if(gSubmit) gSubmit.onclick = submitGramAnswer;
+  const gNext = document.querySelector('[data-action="grammar-next"]');
+  if(gNext) gNext.onclick = gramNext;
+  const gNextStory = document.querySelector('[data-action="next-story"]');
+  if(gNextStory) gNextStory.onclick = gramNextStory;
+  const gRestart = document.querySelector('[data-action="restart-story"]');
+  if(gRestart) gRestart.onclick = gramRestart;
+  const gGen = document.querySelector('[data-action="generate-story"]');
+  if(gGen) gGen.onclick = generateStory;
+
+  document.querySelectorAll('[data-addmode]').forEach(el=>{
+    el.onclick = ()=>{ addState.mode = el.getAttribute('data-addmode'); addState.err=null; render(); };
+  });
+  const saveKeyBtn = document.querySelector('[data-action="save-apikey"]');
+  if(saveKeyBtn) saveKeyBtn.onclick = ()=>{
+    const input = byId('apiKeyInput');
+    if(input && input.value.trim()){ setApiKey(input.value); toast('Clave guardada.'); render(); }
+  };
+  const fillWordBtn = document.querySelector('[data-action="fill-word"]');
+  if(fillWordBtn) fillWordBtn.onclick = fillWord;
+  const saveWordBtn = document.querySelector('[data-action="save-word"]');
+  if(saveWordBtn) saveWordBtn.onclick = saveWord;
+  const fillVerbBtn = document.querySelector('[data-action="fill-verb"]');
+  if(fillVerbBtn) fillVerbBtn.onclick = fillVerb;
+  const saveVerbBtn = document.querySelector('[data-action="save-verb"]');
+  if(saveVerbBtn) saveVerbBtn.onclick = saveVerb;
+
+  ['typeAns','verbAns','gramAns'].forEach(id=>{
+    const el = byId(id);
+    if(el){
+      el.focus();
+      el.onkeydown = (e)=>{ if(e.key==='Enter'){ e.preventDefault();
+        if(id==='typeAns') handleTypeSubmit();
+        else if(id==='verbAns') submitVerbAnswer();
+        else submitGramAnswer();
+      } };
+    }
+  });
+
+  if(openVerbInf){ /* overlay handled separately */ }
+}
+
+function renderVerbOverlay(){
+  const app = byId('app');
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed; inset:0; background:var(--paper); z-index:50; overflow-y:auto; padding:16px 18px calc(30px + env(safe-area-inset-bottom,0px)); padding-top:calc(16px + env(safe-area-inset-top,0px));';
+  overlay.innerHTML = '<div style="max-width:640px; margin:0 auto">'+renderVerbDetail(openVerbInf)+'</div>';
+  document.body.appendChild(overlay);
+  overlay.querySelector('[data-action="close-verb"]').onclick = ()=>{ overlay.remove(); openVerbInf=null; };
+  overlay.querySelectorAll('[data-speak]').forEach(el=>{ el.onclick = ()=>speak(el.getAttribute('data-speak')); });
+}
+
+init();
+})();
+</script>
+</body>
+</html>
