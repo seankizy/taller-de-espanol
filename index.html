@@ -821,6 +821,47 @@ const LocalDB = (function(){
   }
   return {doc:docRef};
 })();
+const LOCAL_DB_KEY = 'tallerEspanol:db:v1';
+
+/* ============================================================
+   EXPORT / IMPORT — a portable backup of everything LocalDB holds
+   (words, verb progress, grammar sets, streaks). Does not include
+   the API key, which stays device-only on purpose.
+   ============================================================ */
+function exportProgress(){
+  try{
+    const raw = localStorage.getItem(LOCAL_DB_KEY) || '{}';
+    const blob = new Blob([raw], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const d = new Date();
+    const stamp = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    a.href = url;
+    a.download = 'taller-de-espanol-progreso-'+stamp+'.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+    toast('Progreso exportado.');
+  }catch(e){ toast('No se pudo exportar.'); }
+}
+function importProgressFile(file){
+  const reader = new FileReader();
+  reader.onload = async ()=>{
+    let parsed;
+    try{ parsed = JSON.parse(reader.result); }catch(e){ toast('Ese archivo no es válido.'); return; }
+    if(!parsed || typeof parsed!=='object'){ toast('Ese archivo no es válido.'); return; }
+    if(!confirm('Esto reemplaza tu progreso actual en este navegador con el del archivo. ¿Continuar?')) return;
+    try{
+      localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(parsed));
+      toast('Progreso importado.');
+      await loadAll();
+      S.view = 'home';
+      render();
+    }catch(e){ toast('No se pudo importar.'); }
+  };
+  reader.readAsText(file);
+}
 
 /* ============================================================
    BRING-YOUR-OWN ANTHROPIC API KEY
@@ -1787,9 +1828,23 @@ function renderApiKeyPanel(){
     '<button class="btn secondary" data-action="save-apikey" style="margin-top:10px">'+(has?'Actualizar clave':'Guardar clave')+'</button>'+
   '</div>';
 }
+function renderBackupPanel(){
+  return '<div class="panel" style="margin-bottom:16px">'+
+    '<h3 style="font-size:15px; margin-bottom:4px">Copia de seguridad</h3>'+
+    '<div style="color:var(--stone); font-size:12px; margin-bottom:10px">'+
+      'Tu progreso vive solo en este navegador. Exporta un archivo de vez en cuando por si cambias de teléfono o borras datos de Safari.'+
+    '</div>'+
+    '<div class="row">'+
+      '<button class="btn secondary" data-action="export-progress">Exportar progreso</button>'+
+      '<button class="btn secondary" data-action="import-progress">Importar progreso</button>'+
+    '</div>'+
+    '<input type="file" id="importFileInput" accept="application/json" style="display:none">'+
+  '</div>';
+}
 function renderAdd(){
   return ''+
   renderApiKeyPanel()+
+  renderBackupPanel()+
   '<div class="row" style="margin-bottom:16px">'+
     '<button class="btn '+(addState.mode==='word'?'copper':'secondary')+'" data-addmode="word">Palabra</button>'+
     '<button class="btn '+(addState.mode==='verb'?'copper':'secondary')+'" data-addmode="verb">Verbo</button>'+
@@ -1991,6 +2046,14 @@ function attachHandlers(){
   if(saveKeyBtn) saveKeyBtn.onclick = ()=>{
     const input = byId('apiKeyInput');
     if(input && input.value.trim()){ setApiKey(input.value); toast('Clave guardada.'); render(); }
+  };
+  const exportBtn = document.querySelector('[data-action="export-progress"]');
+  if(exportBtn) exportBtn.onclick = exportProgress;
+  const importBtn = document.querySelector('[data-action="import-progress"]');
+  const importInput = byId('importFileInput');
+  if(importBtn && importInput) importBtn.onclick = ()=> importInput.click();
+  if(importInput) importInput.onchange = ()=>{
+    if(importInput.files && importInput.files[0]) importProgressFile(importInput.files[0]);
   };
   const fillWordBtn = document.querySelector('[data-action="fill-word"]');
   if(fillWordBtn) fillWordBtn.onclick = fillWord;
