@@ -1188,22 +1188,43 @@ function renderVocab(){
    VOCAB SESSION
    ============================================================ */
 function startReview(){
-  const queue = shuffle(dueWords()).slice(0, 20);
-  if(!queue.length) return;
+  const due = dueWords();
+  const dueReview = shuffle(due.filter(w=>w.level>=0));
+  const allNew = shuffle(due.filter(w=>w.level<0));
+  const MAX_TOTAL = 20, MAX_NEW = 8;
+  const reviewPart = dueReview.slice(0, MAX_TOTAL);
+  const newPart = allNew.slice(0, Math.min(MAX_NEW, Math.max(0, MAX_TOTAL - reviewPart.length)));
+  if(!reviewPart.length && !newPart.length) return;
+
+  // New words are introduced up front as a batch, then tested later,
+  // interleaved with review cards — never right after seeing them —
+  // so the first quiz is a real retrieval attempt, not an echo.
+  const introSteps = newPart.map(w=>({wordId:w.id, kind:'intro'}));
+  const quizSteps = shuffle([
+    ...newPart.map(w=>({wordId:w.id, kind:'quiz'})),
+    ...reviewPart.map(w=>({wordId:w.id, kind:'quiz'}))
+  ]);
+  const queue = introSteps.concat(quizSteps);
+
   S.session = {
-    queue, idx:0, correct:0, total:queue.length, answered:0,
-    phase:'intro', // intro -> quiz -> feedback
+    queue, idx:0, correct:0, total:newPart.length+reviewPart.length, answered:0,
+    phase:'quiz', // quiz -> feedback (only meaningful on a 'quiz' step)
     answer:null, picked:null, showTranslation:false
   };
   render();
 }
 
-function currentSessionWord(){ return S.session.queue[S.session.idx]; }
+function currentSessionStep(){ return S.session.queue[S.session.idx]; }
+function currentSessionWord(){
+  const step = currentSessionStep();
+  return step ? S.words.find(w=>w.id===step.wordId) : null;
+}
 
 function renderSession(){
   const s = S.session;
-  const w = currentSessionWord();
-  if(!w){
+  const step = currentSessionStep();
+  const w = step ? currentSessionWord() : null;
+  if(!step || !w){
     const pct = s.total? Math.round(100*s.correct/s.total):0;
     return '<div class="panel" style="text-align:center; padding:34px 18px">'+
       '<h2 style="font-size:30px; color:var(--copper-dark)">Sesión completa</h2>'+
@@ -1211,11 +1232,11 @@ function renderSession(){
       '<button class="btn copper" data-action="end-session">Terminar</button>'+
     '</div>';
   }
-  const progress = Math.round(100*s.idx/s.total);
+  const progress = s.total ? Math.round(100*s.answered/s.total) : 0;
   const isNew = w.level < 0;
   let inner = '';
 
-  if(isNew && s.phase==='intro'){
+  if(step.kind==='intro'){
     inner = ''+
       '<span class="tag">'+domLabel(w.domain)+' &middot; palabra nueva</span>'+
       '<div class="prompt" style="margin-top:14px">'+esc(w.es)+'</div>'+
@@ -1290,10 +1311,15 @@ function mcqOptions(w){
   return shuffle([w.en, ...distractors]);
 }
 
-function handleIntroContinue(){
-  S.session.phase = 'quiz';
-  S.session.showTranslation = false;
+function advanceSession(){
+  const s = S.session;
+  s.idx++;
+  s.phase = 'quiz';
+  s.showTranslation = false;
   render();
+}
+function handleIntroContinue(){
+  advanceSession();
 }
 function toggleTranslation(){
   if(!S.session) return;
@@ -1326,11 +1352,7 @@ function finishAnswer(correct){
   render();
 }
 function sessionNext(){
-  const s = S.session;
-  s.idx++;
-  s.phase = 'intro';
-  s.showTranslation = false;
-  render();
+  advanceSession();
 }
 function endSession(){
   const answered = S.session ? S.session.answered : 0;
