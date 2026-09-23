@@ -221,6 +221,9 @@ hr{border:none; border-top:1px solid var(--line); margin:14px 0;}
 .feedback.bad{background:var(--bad-bg); color:var(--bad);}
 .feedback .correction{color:var(--ink); font-weight:600; margin-top:4px;}
 .feedback .note{color:var(--stone); margin-top:6px; font-style:italic;}
+.example-block{margin-top:8px; text-align:left; max-width:440px;}
+.example-block .example-es{font-size:13px; color:var(--stone); font-style:italic;}
+.example-block .example-en{font-size:12px; color:var(--copper-dark); margin-top:3px;}
 
 /* ---- verb table ---- */
 .vtable{width:100%; border-collapse:collapse; font-size:13px; margin-top:8px;}
@@ -267,104 +270,104 @@ function domLabel(id){ const d=DOMAINS.find(d=>d.id===id); return d?d.label:id; 
 // s: spanish (with article for nouns) | e: english | g: gender m/f/'' | p: pos n/v/adj | d: domain | x: example sentence
 const SEED_WORDS = [
 // weld
-{s:'la soldadura',e:'weld / welding',g:'f',p:'n',d:'weld',x:'La soldadura quedó muy limpia.'},
-{s:'el soldador',e:'welder (person)',g:'m',p:'n',d:'weld',x:'El soldador terminó la pieza a tiempo.'},
-{s:'soldar',e:'to weld',g:'',p:'v',d:'weld',x:'Vamos a soldar esta unión mañana.'},
-{s:'el cordón de soldadura',e:'weld bead',g:'m',p:'n',d:'weld',x:'Revisa el cordón de soldadura antes de pintar.'},
-{s:'la lámina',e:'sheet metal',g:'f',p:'n',d:'weld',x:'Cortamos la lámina de acero inoxidable.'},
-{s:'el acero inoxidable',e:'stainless steel',g:'m',p:'n',d:'weld',x:'El acero inoxidable no se oxida fácilmente.'},
-{s:'la esmeriladora',e:'angle grinder',g:'f',p:'n',d:'weld',x:'Usa la esmeriladora para pulir el borde.'},
-{s:'el soplete',e:'torch',g:'m',p:'n',d:'weld',x:'El soplete corta el metal muy rápido.'},
-{s:'la chispa',e:'spark',g:'f',p:'n',d:'weld',x:'Cuidado con las chispas cerca del solvente.'},
-{s:'el electrodo',e:'welding electrode',g:'m',p:'n',d:'weld',x:'Cambiamos el electrodo cada media hora.'},
+{s:'la soldadura',e:'weld / welding',g:'f',p:'n',d:'weld',x:'La soldadura quedó muy limpia.',t:'The weld came out very clean.'},
+{s:'el soldador',e:'welder (person)',g:'m',p:'n',d:'weld',x:'El soldador terminó la pieza a tiempo.',t:'The welder finished the piece on time.'},
+{s:'soldar',e:'to weld',g:'',p:'v',d:'weld',x:'Vamos a soldar esta unión mañana.',t:'We\'re going to weld this joint tomorrow.'},
+{s:'el cordón de soldadura',e:'weld bead',g:'m',p:'n',d:'weld',x:'Revisa el cordón de soldadura antes de pintar.',t:'Check the weld bead before painting.'},
+{s:'la lámina',e:'sheet metal',g:'f',p:'n',d:'weld',x:'Cortamos la lámina de acero inoxidable.',t:'We cut the stainless steel sheet.'},
+{s:'el acero inoxidable',e:'stainless steel',g:'m',p:'n',d:'weld',x:'El acero inoxidable no se oxida fácilmente.',t:'Stainless steel doesn\'t rust easily.'},
+{s:'la esmeriladora',e:'angle grinder',g:'f',p:'n',d:'weld',x:'Usa la esmeriladora para pulir el borde.',t:'Use the angle grinder to polish the edge.'},
+{s:'el soplete',e:'torch',g:'m',p:'n',d:'weld',x:'El soplete corta el metal muy rápido.',t:'The torch cuts metal very quickly.'},
+{s:'la chispa',e:'spark',g:'f',p:'n',d:'weld',x:'Cuidado con las chispas cerca del solvente.',t:'Watch out for sparks near the solvent.'},
+{s:'el electrodo',e:'welding electrode',g:'m',p:'n',d:'weld',x:'Cambiamos el electrodo cada media hora.',t:'We change the electrode every half hour.'},
 // stone
-{s:'la piedra',e:'stone',g:'f',p:'n',d:'stone',x:'La piedra pesa más de lo que pensábamos.'},
-{s:'el mármol',e:'marble',g:'m',p:'n',d:'stone',x:'El mármol viene de Carrara.'},
-{s:'tallar',e:'to carve',g:'',p:'v',d:'stone',x:'Tallaron la figura en tres semanas.'},
-{s:'el cincel',e:'chisel',g:'m',p:'n',d:'stone',x:'El cantero usa un cincel fino para los detalles.'},
-{s:'el cantero',e:'stonemason',g:'m',p:'n',d:'stone',x:'El cantero lleva veinte años en el oficio.'},
-{s:'la cantera',e:'quarry',g:'f',p:'n',d:'stone',x:'El bloque salió de una cantera en Zacatecas.'},
-{s:'pulir',e:'to polish',g:'',p:'v',d:'stone',x:'Vamos a pulir la superficie mañana.'},
-{s:'la veta',e:'vein (in stone)',g:'f',p:'n',d:'stone',x:'Esa veta le da mucho carácter a la piedra.'},
-{s:'el bloque',e:'block',g:'m',p:'n',d:'stone',x:'El bloque llegó agrietado.'},
-{s:'el andamio',e:'scaffolding',g:'m',p:'n',d:'stone',x:'Montamos el andamio para llegar a la parte alta.'},
+{s:'la piedra',e:'stone',g:'f',p:'n',d:'stone',x:'La piedra pesa más de lo que pensábamos.',t:'The stone weighs more than we thought.'},
+{s:'el mármol',e:'marble',g:'m',p:'n',d:'stone',x:'El mármol viene de Carrara.',t:'The marble comes from Carrara.'},
+{s:'tallar',e:'to carve',g:'',p:'v',d:'stone',x:'Tallaron la figura en tres semanas.',t:'They carved the figure in three weeks.'},
+{s:'el cincel',e:'chisel',g:'m',p:'n',d:'stone',x:'El cantero usa un cincel fino para los detalles.',t:'The stonemason uses a fine chisel for the details.'},
+{s:'el cantero',e:'stonemason',g:'m',p:'n',d:'stone',x:'El cantero lleva veinte años en el oficio.',t:'The stonemason has been in the trade for twenty years.'},
+{s:'la cantera',e:'quarry',g:'f',p:'n',d:'stone',x:'El bloque salió de una cantera en Zacatecas.',t:'The block came from a quarry in Zacatecas.'},
+{s:'pulir',e:'to polish',g:'',p:'v',d:'stone',x:'Vamos a pulir la superficie mañana.',t:'We\'re going to polish the surface tomorrow.'},
+{s:'la veta',e:'vein (in stone)',g:'f',p:'n',d:'stone',x:'Esa veta le da mucho carácter a la piedra.',t:'That vein gives the stone a lot of character.'},
+{s:'el bloque',e:'block',g:'m',p:'n',d:'stone',x:'El bloque llegó agrietado.',t:'The block arrived cracked.'},
+{s:'el andamio',e:'scaffolding',g:'m',p:'n',d:'stone',x:'Montamos el andamio para llegar a la parte alta.',t:'We set up the scaffolding to reach the top part.'},
 // foundry
-{s:'la fundición',e:'foundry / casting',g:'f',p:'n',d:'foundry',x:'Enviamos las piezas a la fundición en Puebla.'},
-{s:'fundir',e:'to melt / cast',g:'',p:'v',d:'foundry',x:'Van a fundir el bronce mañana.'},
-{s:'el bronce',e:'bronze',g:'m',p:'n',d:'foundry',x:'El bronce se oscurece con el tiempo.'},
-{s:'el molde',e:'mold',g:'m',p:'n',d:'foundry',x:'El molde de silicón captura cada detalle.'},
-{s:'la cera perdida',e:'lost wax (casting method)',g:'f',p:'n',d:'foundry',x:'Usamos la técnica de cera perdida.'},
-{s:'verter',e:'to pour',g:'',p:'v',d:'foundry',x:'Vertieron el metal fundido con mucho cuidado.'},
-{s:'el crisol',e:'crucible',g:'m',p:'n',d:'foundry',x:'El crisol aguanta temperaturas extremas.'},
-{s:'la pátina',e:'patina',g:'f',p:'n',d:'foundry',x:'La pátina le da un tono verde azulado.'},
-{s:'el horno',e:'furnace / kiln',g:'m',p:'n',d:'foundry',x:'El horno alcanza mil grados.'},
-{s:'la pieza',e:'piece / part',g:'f',p:'n',d:'foundry',x:'Cada pieza se numera antes de enviarla.'},
+{s:'la fundición',e:'foundry / casting',g:'f',p:'n',d:'foundry',x:'Enviamos las piezas a la fundición en Puebla.',t:'We send the pieces to the foundry in Puebla.'},
+{s:'fundir',e:'to melt / cast',g:'',p:'v',d:'foundry',x:'Van a fundir el bronce mañana.',t:'They\'re going to melt the bronze tomorrow.'},
+{s:'el bronce',e:'bronze',g:'m',p:'n',d:'foundry',x:'El bronce se oscurece con el tiempo.',t:'Bronze darkens over time.'},
+{s:'el molde',e:'mold',g:'m',p:'n',d:'foundry',x:'El molde de silicón captura cada detalle.',t:'The silicone mold captures every detail.'},
+{s:'la cera perdida',e:'lost wax (casting method)',g:'f',p:'n',d:'foundry',x:'Usamos la técnica de cera perdida.',t:'We use the lost-wax technique.'},
+{s:'verter',e:'to pour',g:'',p:'v',d:'foundry',x:'Vertieron el metal fundido con mucho cuidado.',t:'They poured the molten metal very carefully.'},
+{s:'el crisol',e:'crucible',g:'m',p:'n',d:'foundry',x:'El crisol aguanta temperaturas extremas.',t:'The crucible withstands extreme temperatures.'},
+{s:'la pátina',e:'patina',g:'f',p:'n',d:'foundry',x:'La pátina le da un tono verde azulado.',t:'The patina gives it a blue-green tone.'},
+{s:'el horno',e:'furnace / kiln',g:'m',p:'n',d:'foundry',x:'El horno alcanza mil grados.',t:'The furnace reaches a thousand degrees.'},
+{s:'la pieza',e:'piece / part',g:'f',p:'n',d:'foundry',x:'Cada pieza se numera antes de enviarla.',t:'Each piece is numbered before it\'s shipped.'},
 // materials
-{s:'la resina',e:'resin',g:'f',p:'n',d:'materials',x:'La resina tarda veinticuatro horas en curar.'},
-{s:'el cobre',e:'copper',g:'m',p:'n',d:'materials',x:'El cobre se oxida y toma un tono verde.'},
-{s:'el acabado',e:'finish',g:'m',p:'n',d:'materials',x:'El acabado mate se ve mejor bajo esta luz.'},
-{s:'el barniz',e:'varnish',g:'m',p:'n',d:'materials',x:'Aplicamos dos capas de barniz.'},
-{s:'la pintura',e:'paint',g:'f',p:'n',d:'materials',x:'La pintura industrial resiste la intemperie.'},
-{s:'lijar',e:'to sand',g:'',p:'v',d:'materials',x:'Hay que lijar antes de pintar.'},
-{s:'el pigmento',e:'pigment',g:'m',p:'n',d:'materials',x:'Mezclamos el pigmento directamente en la resina.'},
-{s:'impermeable',e:'waterproof',g:'',p:'adj',d:'materials',x:'Necesitamos un sellador impermeable.'},
-{s:'brillante',e:'glossy',g:'',p:'adj',d:'materials',x:'¿Lo quieres brillante o mate?'},
-{s:'mate',e:'matte',g:'',p:'adj',d:'materials',x:'Prefiero el acabado mate.'},
+{s:'la resina',e:'resin',g:'f',p:'n',d:'materials',x:'La resina tarda veinticuatro horas en curar.',t:'The resin takes twenty-four hours to cure.'},
+{s:'el cobre',e:'copper',g:'m',p:'n',d:'materials',x:'El cobre se oxida y toma un tono verde.',t:'Copper oxidizes and turns a green tone.'},
+{s:'el acabado',e:'finish',g:'m',p:'n',d:'materials',x:'El acabado mate se ve mejor bajo esta luz.',t:'The matte finish looks better under this light.'},
+{s:'el barniz',e:'varnish',g:'m',p:'n',d:'materials',x:'Aplicamos dos capas de barniz.',t:'We apply two coats of varnish.'},
+{s:'la pintura',e:'paint',g:'f',p:'n',d:'materials',x:'La pintura industrial resiste la intemperie.',t:'Industrial paint withstands the weather.'},
+{s:'lijar',e:'to sand',g:'',p:'v',d:'materials',x:'Hay que lijar antes de pintar.',t:'You have to sand before painting.'},
+{s:'el pigmento',e:'pigment',g:'m',p:'n',d:'materials',x:'Mezclamos el pigmento directamente en la resina.',t:'We mix the pigment directly into the resin.'},
+{s:'impermeable',e:'waterproof',g:'',p:'adj',d:'materials',x:'Necesitamos un sellador impermeable.',t:'We need a waterproof sealant.'},
+{s:'brillante',e:'glossy',g:'',p:'adj',d:'materials',x:'¿Lo quieres brillante o mate?',t:'Do you want it glossy or matte?'},
+{s:'mate',e:'matte',g:'',p:'adj',d:'materials',x:'Prefiero el acabado mate.',t:'I prefer the matte finish.'},
 // eng
-{s:'la estructura',e:'structure',g:'f',p:'n',d:'eng',x:'La estructura interna es de acero.'},
-{s:'el soporte',e:'support / bracket',g:'m',p:'n',d:'eng',x:'El soporte debe aguantar doscientos kilos.'},
-{s:'el peso',e:'weight',g:'m',p:'n',d:'eng',x:'El peso total supera la tonelada.'},
-{s:'la carga',e:'load',g:'f',p:'n',d:'eng',x:'Calculamos la carga máxima del piso.'},
-{s:'el plano',e:'blueprint',g:'m',p:'n',d:'eng',x:'El plano indica cada medida exacta.'},
-{s:'la medida',e:'measurement',g:'f',p:'n',d:'eng',x:'Verifica la medida dos veces.'},
-{s:'el ingeniero',e:'engineer',g:'m',p:'n',d:'eng',x:'La ingeniera aprobó el diseño.'},
-{s:'resistente',e:'sturdy / resistant',g:'',p:'adj',d:'eng',x:'El material es muy resistente al viento.'},
-{s:'el anclaje',e:'anchoring',g:'m',p:'n',d:'eng',x:'El anclaje va directo al concreto.'},
-{s:'la base de concreto',e:'concrete base',g:'f',p:'n',d:'eng',x:'La base de concreto necesita curar una semana.'},
+{s:'la estructura',e:'structure',g:'f',p:'n',d:'eng',x:'La estructura interna es de acero.',t:'The internal structure is steel.'},
+{s:'el soporte',e:'support / bracket',g:'m',p:'n',d:'eng',x:'El soporte debe aguantar doscientos kilos.',t:'The bracket needs to hold two hundred kilos.'},
+{s:'el peso',e:'weight',g:'m',p:'n',d:'eng',x:'El peso total supera la tonelada.',t:'The total weight exceeds a ton.'},
+{s:'la carga',e:'load',g:'f',p:'n',d:'eng',x:'Calculamos la carga máxima del piso.',t:'We calculate the floor\'s maximum load.'},
+{s:'el plano',e:'blueprint',g:'m',p:'n',d:'eng',x:'El plano indica cada medida exacta.',t:'The blueprint shows every exact measurement.'},
+{s:'la medida',e:'measurement',g:'f',p:'n',d:'eng',x:'Verifica la medida dos veces.',t:'Double-check the measurement.'},
+{s:'el ingeniero',e:'engineer',g:'m',p:'n',d:'eng',x:'La ingeniera aprobó el diseño.',t:'The engineer approved the design.'},
+{s:'resistente',e:'sturdy / resistant',g:'',p:'adj',d:'eng',x:'El material es muy resistente al viento.',t:'The material is very resistant to wind.'},
+{s:'el anclaje',e:'anchoring',g:'m',p:'n',d:'eng',x:'El anclaje va directo al concreto.',t:'The anchor goes directly into the concrete.'},
+{s:'la base de concreto',e:'concrete base',g:'f',p:'n',d:'eng',x:'La base de concreto necesita curar una semana.',t:'The concrete base needs a week to cure.'},
 // install
-{s:'instalar',e:'to install',g:'',p:'v',d:'install',x:'Vamos a instalar la pieza el lunes.'},
-{s:'montar',e:'to assemble / mount',g:'',p:'v',d:'install',x:'Vamos a montar la pieza el lunes.'},
-{s:'la grúa',e:'crane',g:'f',p:'n',d:'install',x:'La grúa levanta hasta cinco toneladas.'},
-{s:'el montacargas',e:'forklift',g:'m',p:'n',d:'install',x:'El montacargas no cabe por esa puerta.'},
-{s:'las correas',e:'straps',g:'f',p:'n',d:'install',x:'Aseguramos la pieza con correas.'},
-{s:'el nivel',e:'level (tool)',g:'m',p:'n',d:'install',x:'Usa el nivel para que quede derecho.'},
-{s:'el sitio',e:'site',g:'m',p:'n',d:'install',x:'Llegamos al sitio a las ocho.'},
-{s:'levantar',e:'to lift',g:'',p:'v',d:'install',x:'Necesitamos tres personas para levantar esto.'},
-{s:'asegurar',e:'to secure',g:'',p:'v',d:'install',x:'Asegura bien los tornillos.'},
-{s:'el andamiaje',e:'scaffolding system',g:'m',p:'n',d:'install',x:'El andamiaje tarda un día en armarse.'},
+{s:'instalar',e:'to install',g:'',p:'v',d:'install',x:'Vamos a instalar la pieza el lunes.',t:'We\'re going to install the piece on Monday.'},
+{s:'montar',e:'to assemble / mount',g:'',p:'v',d:'install',x:'Vamos a montar la pieza el lunes.',t:'We\'re going to assemble the piece on Monday.'},
+{s:'la grúa',e:'crane',g:'f',p:'n',d:'install',x:'La grúa levanta hasta cinco toneladas.',t:'The crane lifts up to five tons.'},
+{s:'el montacargas',e:'forklift',g:'m',p:'n',d:'install',x:'El montacargas no cabe por esa puerta.',t:'The forklift doesn\'t fit through that door.'},
+{s:'las correas',e:'straps',g:'f',p:'n',d:'install',x:'Aseguramos la pieza con correas.',t:'We secure the piece with straps.'},
+{s:'el nivel',e:'level (tool)',g:'m',p:'n',d:'install',x:'Usa el nivel para que quede derecho.',t:'Use the level so it comes out straight.'},
+{s:'el sitio',e:'site',g:'m',p:'n',d:'install',x:'Llegamos al sitio a las ocho.',t:'We arrive at the site at eight.'},
+{s:'levantar',e:'to lift',g:'',p:'v',d:'install',x:'Necesitamos tres personas para levantar esto.',t:'We need three people to lift this.'},
+{s:'asegurar',e:'to secure',g:'',p:'v',d:'install',x:'Asegura bien los tornillos.',t:'Make sure the screws are tight.'},
+{s:'el andamiaje',e:'scaffolding system',g:'m',p:'n',d:'install',x:'El andamiaje tarda un día en armarse.',t:'The scaffolding system takes a day to put up.'},
 // ship
-{s:'enviar',e:'to send',g:'',p:'v',d:'ship',x:'Vamos a enviar la pieza el jueves.'},
-{s:'el envío',e:'shipment',g:'m',p:'n',d:'ship',x:'El envío llega la próxima semana.'},
-{s:'el embalaje',e:'packaging / crating',g:'m',p:'n',d:'ship',x:'El embalaje debe proteger las esquinas.'},
-{s:'la caja de madera',e:'wooden crate',g:'f',p:'n',d:'ship',x:'Construimos una caja de madera a la medida.'},
-{s:'el transportista',e:'carrier / shipper',g:'m',p:'n',d:'ship',x:'El transportista confirmó la hora de recogida.'},
-{s:'la aduana',e:'customs',g:'f',p:'n',d:'ship',x:'La pieza está detenida en la aduana.'},
-{s:'el seguro',e:'insurance',g:'m',p:'n',d:'ship',x:'El seguro cubre daños en tránsito.'},
-{s:'frágil',e:'fragile',g:'',p:'adj',d:'ship',x:'Marca la caja como frágil.'},
-{s:'la entrega',e:'delivery',g:'f',p:'n',d:'ship',x:'La entrega está programada para el viernes.'},
-{s:'el almacén',e:'warehouse',g:'m',p:'n',d:'ship',x:'Guardamos las piezas en el almacén.'},
+{s:'enviar',e:'to send',g:'',p:'v',d:'ship',x:'Vamos a enviar la pieza el jueves.',t:'We\'re going to ship the piece on Thursday.'},
+{s:'el envío',e:'shipment',g:'m',p:'n',d:'ship',x:'El envío llega la próxima semana.',t:'The shipment arrives next week.'},
+{s:'el embalaje',e:'packaging / crating',g:'m',p:'n',d:'ship',x:'El embalaje debe proteger las esquinas.',t:'The packaging needs to protect the corners.'},
+{s:'la caja de madera',e:'wooden crate',g:'f',p:'n',d:'ship',x:'Construimos una caja de madera a la medida.',t:'We build a custom wooden crate.'},
+{s:'el transportista',e:'carrier / shipper',g:'m',p:'n',d:'ship',x:'El transportista confirmó la hora de recogida.',t:'The carrier confirmed the pickup time.'},
+{s:'la aduana',e:'customs',g:'f',p:'n',d:'ship',x:'La pieza está detenida en la aduana.',t:'The piece is held up in customs.'},
+{s:'el seguro',e:'insurance',g:'m',p:'n',d:'ship',x:'El seguro cubre daños en tránsito.',t:'The insurance covers damage in transit.'},
+{s:'frágil',e:'fragile',g:'',p:'adj',d:'ship',x:'Marca la caja como frágil.',t:'Mark the box as fragile.'},
+{s:'la entrega',e:'delivery',g:'f',p:'n',d:'ship',x:'La entrega está programada para el viernes.',t:'The delivery is scheduled for Friday.'},
+{s:'el almacén',e:'warehouse',g:'m',p:'n',d:'ship',x:'Guardamos las piezas en el almacén.',t:'We store the pieces in the warehouse.'},
 // contract
-{s:'la cotización',e:'quote',g:'f',p:'n',d:'contract',x:'Mandamos la cotización ayer.'},
-{s:'el presupuesto',e:'budget',g:'m',p:'n',d:'contract',x:'El presupuesto no incluye el envío.'},
-{s:'el contrato',e:'contract',g:'m',p:'n',d:'contract',x:'Firmamos el contrato la semana pasada.'},
-{s:'el anticipo',e:'deposit / advance payment',g:'m',p:'n',d:'contract',x:'Pidieron un anticipo del cincuenta por ciento.'},
-{s:'el plazo',e:'deadline / timeframe',g:'m',p:'n',d:'contract',x:'El plazo de entrega es de ocho semanas.'},
-{s:'la factura',e:'invoice',g:'f',p:'n',d:'contract',x:'Te mando la factura por correo.'},
-{s:'el costo',e:'cost',g:'m',p:'n',d:'contract',x:'El costo subió por el precio del acero.'},
-{s:'negociar',e:'to negotiate',g:'',p:'v',d:'contract',x:'Vamos a negociar el plazo.'},
-{s:'el cliente',e:'client',g:'m',p:'n',d:'contract',x:'El cliente quiere ver el avance.'},
-{s:'firmar',e:'to sign',g:'',p:'v',d:'contract',x:'Falta firmar el contrato.'},
+{s:'la cotización',e:'quote',g:'f',p:'n',d:'contract',x:'Mandamos la cotización ayer.',t:'We sent the quote yesterday.'},
+{s:'el presupuesto',e:'budget',g:'m',p:'n',d:'contract',x:'El presupuesto no incluye el envío.',t:'The budget doesn\'t include shipping.'},
+{s:'el contrato',e:'contract',g:'m',p:'n',d:'contract',x:'Firmamos el contrato la semana pasada.',t:'We signed the contract last week.'},
+{s:'el anticipo',e:'deposit / advance payment',g:'m',p:'n',d:'contract',x:'Pidieron un anticipo del cincuenta por ciento.',t:'They asked for a fifty percent deposit.'},
+{s:'el plazo',e:'deadline / timeframe',g:'m',p:'n',d:'contract',x:'El plazo de entrega es de ocho semanas.',t:'The delivery timeframe is eight weeks.'},
+{s:'la factura',e:'invoice',g:'f',p:'n',d:'contract',x:'Te mando la factura por correo.',t:'I\'ll send you the invoice by email.'},
+{s:'el costo',e:'cost',g:'m',p:'n',d:'contract',x:'El costo subió por el precio del acero.',t:'The cost went up because of steel prices.'},
+{s:'negociar',e:'to negotiate',g:'',p:'v',d:'contract',x:'Vamos a negociar el plazo.',t:'We\'re going to negotiate the deadline.'},
+{s:'el cliente',e:'client',g:'m',p:'n',d:'contract',x:'El cliente quiere ver el avance.',t:'The client wants to see the progress.'},
+{s:'firmar',e:'to sign',g:'',p:'v',d:'contract',x:'Falta firmar el contrato.',t:'The contract still needs to be signed.'},
 // client
-{s:'el avance',e:'progress',g:'m',p:'n',d:'client',x:'Te mando fotos del avance.'},
-{s:'la propuesta',e:'proposal',g:'f',p:'n',d:'client',x:'La propuesta incluye tres opciones de acabado.'},
-{s:'el boceto',e:'sketch',g:'m',p:'n',d:'client',x:'El boceto ya está aprobado.'},
-{s:'revisar',e:'to check / review',g:'',p:'v',d:'client',x:'Vamos a revisar los detalles el jueves.'},
-{s:'aprobar',e:'to approve',g:'',p:'v',d:'client',x:'El artista aprobó el color final.'},
-{s:'el cambio',e:'change',g:'m',p:'n',d:'client',x:'Hubo un cambio de último momento.'},
-{s:'la reunión',e:'meeting',g:'f',p:'n',d:'client',x:'Tenemos una reunión el jueves.'},
-{s:'explicar',e:'to explain',g:'',p:'v',d:'client',x:'Le voy a explicar el proceso.'},
-{s:'de acuerdo',e:'agreed / okay',g:'',p:'phrase',d:'client',x:'Quedamos de acuerdo en la fecha.'},
-{s:'el detalle',e:'detail',g:'m',p:'n',d:'client',x:'Cuida cada detalle del acabado.'}
+{s:'el avance',e:'progress',g:'m',p:'n',d:'client',x:'Te mando fotos del avance.',t:'I\'ll send you photos of the progress.'},
+{s:'la propuesta',e:'proposal',g:'f',p:'n',d:'client',x:'La propuesta incluye tres opciones de acabado.',t:'The proposal includes three finish options.'},
+{s:'el boceto',e:'sketch',g:'m',p:'n',d:'client',x:'El boceto ya está aprobado.',t:'The sketch is already approved.'},
+{s:'revisar',e:'to check / review',g:'',p:'v',d:'client',x:'Vamos a revisar los detalles el jueves.',t:'We\'re going to go over the details on Thursday.'},
+{s:'aprobar',e:'to approve',g:'',p:'v',d:'client',x:'El artista aprobó el color final.',t:'The artist approved the final color.'},
+{s:'el cambio',e:'change',g:'m',p:'n',d:'client',x:'Hubo un cambio de último momento.',t:'There was a last-minute change.'},
+{s:'la reunión',e:'meeting',g:'f',p:'n',d:'client',x:'Tenemos una reunión el jueves.',t:'We have a meeting on Thursday.'},
+{s:'explicar',e:'to explain',g:'',p:'v',d:'client',x:'Le voy a explicar el proceso.',t:'I\'m going to explain the process to him.'},
+{s:'de acuerdo',e:'agreed / okay',g:'',p:'phrase',d:'client',x:'Quedamos de acuerdo en la fecha.',t:'We agreed on the date.'},
+{s:'el detalle',e:'detail',g:'m',p:'n',d:'client',x:'Cuida cada detalle del acabado.',t:'Take care with every detail of the finish.'}
 ];
 
 // Full precomputed conjugations for the starter verb set.
@@ -935,7 +938,7 @@ async function seedData(){
     await Promise.all(chunk.map(w=>{
       const id = uid8();
       return wordsCol.doc(id).set({
-        es:w.s, en:w.e, gender:w.g, pos:w.p, domain:w.d, example:w.x,
+        es:w.s, en:w.e, gender:w.g, pos:w.p, domain:w.d, example:w.x, exampleEn:w.t||'',
         level:-1, nextReview: now(), createdAt: now()
       });
     }));
@@ -959,6 +962,7 @@ async function loadAll(){
     wordsCol.get(), verbsCol.get(), verbCardsCol.get(), grammarCol.get(), profileRef().get()
   ]);
   S.words = wSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  backfillExampleTranslations();
   S.verbs = {};
   vSnap.docs.forEach(d=>{ S.verbs[d.id] = d.data(); });
   S.verbCards = vcSnap.docs.map(d=>({id:d.id, ...d.data()}));
@@ -993,6 +997,30 @@ async function persistMissingVerbCards(missing){
       const c = S.verbCards.find(c=>c.infinitive===m.infinitive && c.tense===m.tense && !c.id);
       if(c) c.id = ref.id;
     }));
+  }
+}
+
+// One-time backfill: older installs seeded before example translations existed
+// are missing exampleEn on their word docs. Match by Spanish term against
+// SEED_WORDS and fill it in, both in memory and persisted, best-effort.
+function backfillExampleTranslations(){
+  const seedByEs = {};
+  SEED_WORDS.forEach(w=>{ if(w.t) seedByEs[w.s] = w.t; });
+  const toPersist = [];
+  S.words.forEach(w=>{
+    if(!w.exampleEn && w.example && seedByEs[w.es]){
+      w.exampleEn = seedByEs[w.es];
+      toPersist.push(w);
+    }
+  });
+  if(toPersist.length) persistExampleBackfill(toPersist);
+}
+async function persistExampleBackfill(words){
+  for(let i=0;i<words.length;i+=8){
+    const chunk = words.slice(i,i+8);
+    await Promise.all(chunk.map(w=>
+      profileRef().collection('words').doc(w.id).update({exampleEn:w.exampleEn}).catch(()=>{})
+    ));
   }
 }
 
@@ -1165,7 +1193,7 @@ function startReview(){
   S.session = {
     queue, idx:0, correct:0, total:queue.length, answered:0,
     phase:'intro', // intro -> quiz -> feedback
-    answer:null, picked:null
+    answer:null, picked:null, showTranslation:false
   };
   render();
 }
@@ -1193,7 +1221,7 @@ function renderSession(){
       '<div class="prompt" style="margin-top:14px">'+esc(w.es)+'</div>'+
       speakBtn(stripArticle(w.es))+
       '<div class="sub" style="margin-top:6px">'+esc(w.en)+'</div>'+
-      '<div class="sub" style="font-size:13px; margin-top:2px">'+esc(w.example)+'</div>'+
+      renderExampleBlock(w, s)+
       '<button class="btn copper" data-action="intro-continue" style="margin-top:16px">Entendido</button>';
   } else {
     const type = isNew ? 'mcq' : cardTypeForLevel(w.level);
@@ -1206,8 +1234,8 @@ function renderSession(){
         '<div class="feedback '+(wasCorrect?'good':'bad')+'">'+
           (wasCorrect?'Correcto':'La respuesta correcta era:')+
           (!wasCorrect?'<div class="correction">'+esc(w.en)+'</div>':'')+
-          '<div class="note">'+esc(w.example)+'</div>'+
         '</div>'+
+        renderExampleBlock(w, s)+
         '<button class="btn copper" data-action="session-next" style="margin-top:12px">Siguiente</button>';
     } else if(type==='mcq'){
       const opts = mcqOptions(w);
@@ -1240,6 +1268,22 @@ function renderSession(){
     '<button class="btn ghost" data-action="end-session" style="margin-top:14px">Salir de la sesión</button>';
 }
 
+function renderExampleBlock(w, s){
+  if(!w.example) return '';
+  const hasTranslation = !!w.exampleEn;
+  const revealed = !!s.showTranslation;
+  let html = '<div class="example-block">'+
+    '<div class="example-es">'+esc(w.example)+'</div>';
+  if(hasTranslation){
+    if(revealed){
+      html += '<div class="example-en">'+esc(w.exampleEn)+'</div>';
+    } else {
+      html += '<button class="btn ghost" data-action="toggle-translation" style="margin-top:4px; padding:4px 10px; font-size:12px">Ver traducción</button>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
 function mcqOptions(w){
   const pool = S.words.filter(x=>x.id!==w.id && x.en!==w.en);
   const distractors = shuffle(pool).slice(0,3).map(x=>x.en);
@@ -1248,6 +1292,12 @@ function mcqOptions(w){
 
 function handleIntroContinue(){
   S.session.phase = 'quiz';
+  S.session.showTranslation = false;
+  render();
+}
+function toggleTranslation(){
+  if(!S.session) return;
+  S.session.showTranslation = true;
   render();
 }
 function handleMcqPick(opt){
@@ -1279,6 +1329,7 @@ function sessionNext(){
   const s = S.session;
   s.idx++;
   s.phase = 'intro';
+  s.showTranslation = false;
   render();
 }
 function endSession(){
@@ -1866,6 +1917,7 @@ function renderAddWord(){
       '<label>Significado en inglés</label><input type="text" id="dEn" value="'+escAttr(d.en)+'">'+
       '<label>Dominio</label><select id="dDom">'+DOMAINS.map(dm=>'<option value="'+dm.id+'" '+(dm.id===d.domain?'selected':'')+'>'+dm.label+'</option>').join('')+'</select>'+
       '<label>Frase de ejemplo</label><input type="text" id="dEx" value="'+escAttr(d.example)+'">'+
+      '<label>Traducción de la frase (opcional)</label><input type="text" id="dExEn" value="'+escAttr(d.exampleEn||'')+'">'+
       '<button class="btn copper" data-action="save-word" style="margin-top:14px">Guardar palabra</button>';
   }
   html += '</div>';
@@ -1899,10 +1951,10 @@ async function fillWord(){
   try{
     const domainList = DOMAINS.map(d=>d.id).join(', ');
     const prompt = 'A Mexican-Spanish learner is adding the word or phrase "'+es+'" to their vocabulary app for professional use in an art fabrication studio (welding, stone, casting, installation, shipping, contracts). '+
-      'Reply with ONLY JSON, no markdown: {"es":"the term written with its article if it is a noun, in Mexican Spanish","en":"English meaning","domain":"one of: '+domainList+'","example":"one natural Mexican-Spanish example sentence using the term"}';
+      'Reply with ONLY JSON, no markdown: {"es":"the term written with its article if it is a noun, in Mexican Spanish","en":"English meaning","domain":"one of: '+domainList+'","example":"one natural Mexican-Spanish example sentence using the term","exampleEn":"English translation of that example sentence"}';
     const data = await callClaude(prompt);
     if(data && data.es){
-      addState.wordDraft = {es:data.es, en:data.en||'', domain:DOMAINS.some(d=>d.id===data.domain)?data.domain:'general', example:data.example||''};
+      addState.wordDraft = {es:data.es, en:data.en||'', domain:DOMAINS.some(d=>d.id===data.domain)?data.domain:'general', example:data.example||'', exampleEn:data.exampleEn||''};
     } else {
       addState.err = 'No se pudo generar. Intenta de nuevo.';
     }
@@ -1914,9 +1966,10 @@ async function saveWord(){
   d.en = (byId('dEn')||{}).value || d.en;
   d.domain = (byId('dDom')||{}).value || d.domain;
   d.example = (byId('dEx')||{}).value || d.example;
+  d.exampleEn = (byId('dExEn')||{}).value || d.exampleEn || '';
   const id = uid8();
   await profileRef().collection('words').doc(id).set({
-    es:d.es, en:d.en, gender:'', pos:'n', domain:d.domain, example:d.example,
+    es:d.es, en:d.en, gender:'', pos:'n', domain:d.domain, example:d.example, exampleEn:d.exampleEn,
     level:-1, nextReview: now(), createdAt: now()
   });
   addState.wordDraft = null;
@@ -2001,6 +2054,8 @@ function attachHandlers(){
   if(submitType) submitType.onclick = handleTypeSubmit;
   const sessNext = document.querySelector('[data-action="session-next"]');
   if(sessNext) sessNext.onclick = sessionNext;
+  const toggleTransBtn = document.querySelector('[data-action="toggle-translation"]');
+  if(toggleTransBtn) toggleTransBtn.onclick = toggleTranslation;
 
   const startVerbBtn = document.querySelector('[data-action="start-verbdrill"]');
   if(startVerbBtn) startVerbBtn.onclick = startVerbDrill;
