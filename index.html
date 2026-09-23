@@ -962,6 +962,7 @@ async function loadAll(){
     wordsCol.get(), verbsCol.get(), verbCardsCol.get(), grammarCol.get(), profileRef().get()
   ]);
   S.words = wSnap.docs.map(d=>({id:d.id, ...d.data()}));
+  await syncMissingSeedWords();
   backfillExampleTranslations();
   S.verbs = {};
   vSnap.docs.forEach(d=>{ S.verbs[d.id] = d.data(); });
@@ -996,6 +997,30 @@ async function persistMissingVerbCards(missing){
       const ref = await col.add({infinitive:m.infinitive, tense:m.tense, level:-1, nextReview:now()});
       const c = S.verbCards.find(c=>c.infinitive===m.infinitive && c.tense===m.tense && !c.id);
       if(c) c.id = ref.id;
+    }));
+  }
+}
+
+// Add any SEED_WORDS entries the install doesn't have yet (matched by Spanish
+// term). Seeding only runs once on first launch, so this is what lets new
+// vocabulary appended to SEED_WORDS later (e.g. from a tutoring session)
+// actually reach an already-seeded phone: on the next load, anything new
+// gets added as a fresh word to learn, and existing words/progress are
+// left untouched.
+async function syncMissingSeedWords(){
+  const haveEs = new Set(S.words.map(w=>w.es));
+  const missing = SEED_WORDS.filter(w=>!haveEs.has(w.s));
+  if(!missing.length) return;
+  const wordsCol = profileRef().collection('words');
+  for(let i=0;i<missing.length;i+=8){
+    const chunk = missing.slice(i,i+8);
+    await Promise.all(chunk.map(async w=>{
+      const id = uid8();
+      await wordsCol.doc(id).set({
+        es:w.s, en:w.e, gender:w.g, pos:w.p, domain:w.d, example:w.x, exampleEn:w.t||'',
+        level:-1, nextReview: now(), createdAt: now()
+      });
+      S.words.push({id, es:w.s, en:w.e, gender:w.g, pos:w.p, domain:w.d, example:w.x, exampleEn:w.t||'', level:-1, nextReview: now(), createdAt: now()});
     }));
   }
 }
